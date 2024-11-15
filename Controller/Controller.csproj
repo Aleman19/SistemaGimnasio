@@ -41,8 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ClaseController.cs" />
+    <Compile Include="MembresiaController.cs" />
+    <Compile Include="ClienteControlle.cs" />
+    <Compile Include="EntrenadorController.cs" />
+    <Compile Include="FacturaController.cs" />
+    <Compile Include="InventarioController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReporteController.cs" />
+    <Compile Include="ReservaController.cs" />
+    <Compile Include="UsuarioController.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
