@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clase.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Cliente.cs" />
     <Compile Include="Entrenador.cs" />
     <Compile Include="Factura.cs" />
