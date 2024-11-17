@@ -66,4 +66,3 @@
     }
 }
 
-tiene menú contextual
