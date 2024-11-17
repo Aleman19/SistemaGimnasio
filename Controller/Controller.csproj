@@ -60,6 +60,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Asset\Clientes.json" />
+    <None Include="Asset\Entrenadores.json" />
+    <None Include="Asset\Inventario.json" />
+    <None Include="Asset\Membresias.json" />
     <None Include="Asset\Usuarios.json" />
     <None Include="packages.config" />
   </ItemGroup>
