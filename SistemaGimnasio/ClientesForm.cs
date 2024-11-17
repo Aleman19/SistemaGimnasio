@@ -16,5 +16,10 @@ namespace SistemaGimnasio
         {
             InitializeComponent();
         }
+
+        private void ClientesForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
