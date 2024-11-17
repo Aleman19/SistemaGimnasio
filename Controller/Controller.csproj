@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="ClaseController.cs" />
     <Compile Include="Configuration\Configuration.cs" />
-    <Compile Include="DataHandler\FileDataHandler.cs" />
     <Compile Include="DataHandler\IDataHandler.cs" />
     <Compile Include="DataHandler\JsonDataHandler.cs" />
     <Compile Include="MembresiaController.cs" />
