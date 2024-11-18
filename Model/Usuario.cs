@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Model;
-
-namespace Model
+﻿namespace Model
 {
     public class Usuario
     {
-        public string Id { get; set; } // Identificador único del usuariopublic string NombreUsuario { get; set; }
+        public string Id { get; set; }
+        public string NombreUsuario { get; set; } // Asegúrate de que esta propiedad existe
         public string Contraseña { get; set; }
-        public string Rol { get; set; } // Por ejemplo: "Admin", "Cliente", "Entrenador"
+        public string Rol { get; set; }
     }
 }
