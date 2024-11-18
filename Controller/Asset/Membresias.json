@@ -1,13 +1,664 @@
-{
-  "compilerOptions": {
-    "noImplicitAny": false,
-    "noEmitOnError": true,
-    "removeComments": false,
-    "sourceMap": true,
-    "target": "es5"
-  },
-  "exclude": [
-    "node_modules",
-    "wwwroot"
-  ]
-}
+[
+    {
+        "cliente_id": 1,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 2,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 5,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 6,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 7,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 8,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 6,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 7,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 8,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 6,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 7,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 8,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 9,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 10,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 11,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 12,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 13,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 14,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 15,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 16,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 17,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 18,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 19,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 20,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 21,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 22,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 23,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 24,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 25,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 26,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 27,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 28,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 29,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 30,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 31,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 32,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 33,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 34,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 35,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 36,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 37,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 38,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 39,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 40,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 41,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 42,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 43,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 44,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 45,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 46,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 47,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 48,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 49,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 50,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 51,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 52,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 53,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 54,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 55,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 56,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 57,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 58,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 59,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 60,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 61,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 62,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 62,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 62,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 63,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 64,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 65,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 66,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 67,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 68,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 69,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 70,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 71,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 72,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 73,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 74,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 75,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 76,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 77,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 78,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    },
+    {
+        "cliente_id": 77,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 78,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    },
+    {
+        "cliente_id": 77,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 78,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 79,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 80,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 81,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 82,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 83,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 84,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 85,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 86,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 87,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 88,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 89,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 90,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 91,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 92,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 93,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 94,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 95,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 96,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 97,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 98,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 99,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    },
+    {
+        "cliente_id": 100,
+        "tipo": "Mensual",
+        "fecha_inicio": "2023-10-01",
+        "fecha_fin": "2023-11-01"
+    }
+]
