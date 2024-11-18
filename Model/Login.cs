@@ -7,7 +7,9 @@ using Model;
 
 namespace Model
 {
-    internal class Login
+    public class Login
     {
+        public string NombreUsuario { get; set; }
+        public string Contraseña { get; set; }
     }
 }
