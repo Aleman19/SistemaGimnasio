@@ -13,69 +13,93 @@
 
         private void InitializeComponent()
         {
-            this.btnClientes = new System.Windows.Forms.Button();
-            this.btnEntrenadores = new System.Windows.Forms.Button();
-            this.btnClases = new System.Windows.Forms.Button();
-            this.btnInventario = new System.Windows.Forms.Button();
-            this.btnFacturacion = new System.Windows.Forms.Button();
-            this.btnReportes = new System.Windows.Forms.Button();
-            this.btnSalir = new System.Windows.Forms.Button();
-
-            // Botón Clientes
-            this.btnClientes.Text = "Gestión de Clientes";
-            this.btnClientes.Location = new System.Drawing.Point(20, 20);
-            this.btnClientes.Size = new System.Drawing.Size(200, 40);
-            this.btnClientes.Click += new System.EventHandler(this.btnClientes_Click);
-
-            // Botón Entrenadores
-            this.btnEntrenadores.Text = "Gestión de Entrenadores";
-            this.btnEntrenadores.Location = new System.Drawing.Point(20, 70);
-            this.btnEntrenadores.Size = new System.Drawing.Size(200, 40);
-            this.btnEntrenadores.Click += new System.EventHandler(this.btnEntrenadores_Click);
-
-            // Botón Clases
-            this.btnClases.Text = "Gestión de Clases";
-            this.btnClases.Location = new System.Drawing.Point(20, 120);
-            this.btnClases.Size = new System.Drawing.Size(200, 40);
-            this.btnClases.Click += new System.EventHandler(this.btnClases_Click);
-
-            // Botón Inventario
-            this.btnInventario.Text = "Gestión de Inventario";
-            this.btnInventario.Location = new System.Drawing.Point(20, 170);
-            this.btnInventario.Size = new System.Drawing.Size(200, 40);
-            this.btnInventario.Click += new System.EventHandler(this.btnInventario_Click);
-
-            // Botón Facturación
-            this.btnFacturacion.Text = "Gestión de Facturación";
-            this.btnFacturacion.Location = new System.Drawing.Point(20, 220);
-            this.btnFacturacion.Size = new System.Drawing.Size(200, 40);
-            this.btnFacturacion.Click += new System.EventHandler(this.btnFacturacion_Click);
-
-            // Botón Reportes
-            this.btnReportes.Text = "Generación de Reportes";
-            this.btnReportes.Location = new System.Drawing.Point(20, 270);
-            this.btnReportes.Size = new System.Drawing.Size(200, 40);
-            this.btnReportes.Click += new System.EventHandler(this.btnReportes_Click);
-
-            // Botón Salir
-            this.btnSalir.Text = "Salir";
-            this.btnSalir.Location = new System.Drawing.Point(20, 320);
-            this.btnSalir.Size = new System.Drawing.Size(200, 40);
-            this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
-
-            // Configuración del formulario
-            this.ClientSize = new System.Drawing.Size(250, 400);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Menú Principal";
-
-            // Agregar componentes al formulario
-            this.Controls.Add(this.btnClientes);
-            this.Controls.Add(this.btnEntrenadores);
-            this.Controls.Add(this.btnClases);
-            this.Controls.Add(this.btnInventario);
-            this.Controls.Add(this.btnFacturacion);
-            this.Controls.Add(this.btnReportes);
-            this.Controls.Add(this.btnSalir);
+            btnClientes = new Button();
+            btnEntrenadores = new Button();
+            btnClases = new Button();
+            btnInventario = new Button();
+            btnFacturacion = new Button();
+            btnReportes = new Button();
+            btnSalir = new Button();
+            SuspendLayout();
+            // 
+            // btnClientes
+            // 
+            btnClientes.Location = new Point(20, 20);
+            btnClientes.Name = "btnClientes";
+            btnClientes.Size = new Size(200, 40);
+            btnClientes.TabIndex = 0;
+            btnClientes.Text = "Gestión de Clientes";
+            btnClientes.Click += btnClientes_Click;
+            // 
+            // btnEntrenadores
+            // 
+            btnEntrenadores.Location = new Point(20, 70);
+            btnEntrenadores.Name = "btnEntrenadores";
+            btnEntrenadores.Size = new Size(200, 40);
+            btnEntrenadores.TabIndex = 1;
+            btnEntrenadores.Text = "Gestión de Entrenadores";
+            btnEntrenadores.Click += btnEntrenadores_Click;
+            // 
+            // btnClases
+            // 
+            btnClases.Location = new Point(20, 120);
+            btnClases.Name = "btnClases";
+            btnClases.Size = new Size(200, 40);
+            btnClases.TabIndex = 2;
+            btnClases.Text = "Gestión de Clases";
+            btnClases.Click += btnClases_Click;
+            // 
+            // btnInventario
+            // 
+            btnInventario.Location = new Point(20, 170);
+            btnInventario.Name = "btnInventario";
+            btnInventario.Size = new Size(200, 40);
+            btnInventario.TabIndex = 3;
+            btnInventario.Text = "Gestión de Inventario";
+            btnInventario.Click += btnInventario_Click;
+            // 
+            // btnFacturacion
+            // 
+            btnFacturacion.Location = new Point(20, 220);
+            btnFacturacion.Name = "btnFacturacion";
+            btnFacturacion.Size = new Size(200, 40);
+            btnFacturacion.TabIndex = 4;
+            btnFacturacion.Text = "Gestión de Facturación";
+            btnFacturacion.Click += btnFacturacion_Click;
+            // 
+            // btnReportes
+            // 
+            btnReportes.Location = new Point(20, 270);
+            btnReportes.Name = "btnReportes";
+            btnReportes.Size = new Size(200, 40);
+            btnReportes.TabIndex = 5;
+            btnReportes.Text = "Generación de Reportes";
+            btnReportes.Click += btnReportes_Click;
+            // 
+            // btnSalir
+            // 
+            btnSalir.Location = new Point(20, 320);
+            btnSalir.Name = "btnSalir";
+            btnSalir.Size = new Size(200, 40);
+            btnSalir.TabIndex = 6;
+            btnSalir.Text = "Salir";
+            btnSalir.Click += btnSalir_Click;
+            // 
+            // MenuForm
+            // 
+            ClientSize = new Size(250, 400);
+            Controls.Add(btnClientes);
+            Controls.Add(btnEntrenadores);
+            Controls.Add(btnClases);
+            Controls.Add(btnInventario);
+            Controls.Add(btnFacturacion);
+            Controls.Add(btnReportes);
+            Controls.Add(btnSalir);
+            Name = "MenuForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Menú Principal";
+            Load += MenuForm_Load;
+            ResumeLayout(false);
         }
 
         protected override void Dispose(bool disposing)
