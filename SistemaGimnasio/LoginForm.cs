@@ -1,5 +1,4 @@
-﻿using Controller;
-
+﻿
 namespace SistemaGimnasio
 {
     public partial class LoginForm : Form
