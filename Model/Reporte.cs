@@ -7,7 +7,11 @@ using Model;
 
 namespace Model
 {
-    internal class Reporte
+    public class Reporte
     {
+        public string Id { get; set; } // Identificador único del reportepublic string Titulo { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime FechaGeneracion { get; set; }
+        public string Tipo { get; set; } // Por ejemplo: "Clases", "Ingresos"
     }
 }

@@ -7,7 +7,8 @@ using Model;
 
 namespace Model
 {
-    internal class Reserva
+    public class Reserva
     {
+        public string Id { get; set; } // Identificador único de la reservapublic string ClienteId { get; set; } // Relación con el clientepublic string ClaseId { get; set; } // Relación con la clasepublic DateTime FechaReserva { get; set; }
     }
 }
