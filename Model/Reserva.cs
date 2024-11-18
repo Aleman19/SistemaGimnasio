@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Model;
 
 namespace Model
 {
     public class Reserva
     {
-        public string Id { get; set; } // Identificador único de la reservapublic string ClienteId { get; set; } // Relación con el clientepublic string ClaseId { get; set; } // Relación con la clasepublic DateTime FechaReserva { get; set; }
+        public string Id { get; set; }
+        public string ClienteId { get; set; }
+        public string ClaseId { get; set; } // Asegúrate de que esta propiedad existe
+        public DateTime FechaReserva { get; set; } // Asegúrate de que esta propiedad existe
     }
 }
