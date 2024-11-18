@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Model
+﻿namespace Model
 {
-    internal class Usuario
+    public class Usuario
     {
+        public string Id { get; set; }
+        public string NombreUsuario { get; set; } // Asegúrate de que esta propiedad existe
+        public string Contraseña { get; set; }
+        public string Rol { get; set; }
     }
 }
