@@ -63,6 +63,10 @@
       <Project>{05C7702B-9794-4A3F-860A-43074692DDDF}</Project>
       <Name>Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SistemaGimnasio\SistemaGimnasio.csproj">
+      <Project>{f5b194e8-6dab-4e40-bd43-f0d5ecabb129}</Project>
+      <Name>SistemaGimnasio</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Asset\Clientes.json" />
