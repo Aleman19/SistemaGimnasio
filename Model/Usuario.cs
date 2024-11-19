@@ -1,4 +1,6 @@
-﻿namespace Model
+﻿
+
+namespace Model
 {
     public class Usuario
     {
