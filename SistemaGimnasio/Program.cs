@@ -3,15 +3,23 @@ namespace SistemaGimnasio
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// Punto de entrada principal para la aplicación.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            // Inicializa la configuración de la aplicación (como DPI, fuentes predeterminadas, etc.).
             ApplicationConfiguration.Initialize();
-            Application.Run(new MenuForm());
+
+            // Mostrar el formulario de Login al iniciar.
+            using (var loginForm = new LoginForm())
+            {
+                // Si el login es exitoso, se muestra el menú principal.
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    Application.Run(new MenuForm());
+                }
+            }
         }
     }
 }

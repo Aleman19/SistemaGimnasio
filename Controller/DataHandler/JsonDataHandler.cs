@@ -13,6 +13,7 @@ namespace Controller.DataHandler
     public class JsonDataHandler<T> : IDataHandler<T> where T : class
     {
         private readonly string _filePath;
+        private static readonly object FileLock = new object();
 
         /// <summary>
         /// Constructor que inicializa la ruta del archivo JSON.
@@ -20,7 +21,7 @@ namespace Controller.DataHandler
         /// <param name="filePath">La ruta del archivo JSON.</param>
         public JsonDataHandler(string filePath)
         {
-            _filePath = filePath;
+            _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             EnsureFileExists();
         }
 
@@ -29,9 +30,12 @@ namespace Controller.DataHandler
         /// </summary>
         private void EnsureFileExists()
         {
-            if (!File.Exists(_filePath))
+            lock (FileLock)
             {
-                File.WriteAllText(_filePath, "[]"); // Crea un archivo JSON vacío
+                if (!File.Exists(_filePath))
+                {
+                    File.WriteAllText(_filePath, "[]"); // Crea un archivo JSON vacío
+                }
             }
         }
 
@@ -41,14 +45,21 @@ namespace Controller.DataHandler
         /// <returns>Lista de elementos del tipo especificado.</returns>
         public List<T> GetAll()
         {
-            try
+            lock (FileLock)
             {
-                var jsonData = File.ReadAllText(_filePath);
-                return JsonConvert.DeserializeObject<List<T>>(jsonData) ?? new List<T>();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error al leer los datos del archivo {_filePath}: {ex.Message}");
+                try
+                {
+                    var jsonData = File.ReadAllText(_filePath);
+                    return JsonConvert.DeserializeObject<List<T>>(jsonData) ?? new List<T>();
+                }
+                catch (JsonSerializationException ex)
+                {
+                    throw new InvalidOperationException($"Error al deserializar los datos del archivo {_filePath}: {ex.Message}", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new IOException($"Error al leer el archivo {_filePath}: {ex.Message}", ex);
+                }
             }
         }
 
@@ -58,15 +69,17 @@ namespace Controller.DataHandler
         /// <param name="data">Lista de elementos a guardar.</param>
         public void SaveAll(List<T> data)
         {
-            try
+            lock (FileLock)
             {
-                // Especificar explicitamente Newtonsoft.Json.Formatting
-                var jsonData = JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented);
-                File.WriteAllText(_filePath, jsonData);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error al escribir los datos en el archivo {_filePath}: {ex.Message}");
+                try
+                {
+                    var jsonData = JsonConvert.SerializeObject(data, Formatting.Indented);
+                    File.WriteAllText(_filePath, jsonData);
+                }
+                catch (Exception ex)
+                {
+                    throw new IOException($"Error al escribir en el archivo {_filePath}: {ex.Message}", ex);
+                }
             }
         }
 
@@ -77,16 +90,33 @@ namespace Controller.DataHandler
         /// <returns>El elemento encontrado, o null si no existe.</returns>
         public T GetById(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("El ID no puede ser nulo o vacío.", nameof(id));
+            }
+
             try
             {
                 var allData = GetAll();
+
+                // Validar que la entidad tiene una propiedad "Id"
+                var propertyInfo = typeof(T).GetProperty("Id");
+                if (propertyInfo == null)
+                {
+                    throw new InvalidOperationException($"El tipo {typeof(T).Name} no tiene una propiedad 'Id'.");
+                }
+
                 return allData.FirstOrDefault(item =>
-                    (item.GetType().GetProperty("Id")?.GetValue(item, null)?.ToString() ?? string.Empty) == id);
+                    propertyInfo.GetValue(item)?.ToString() == id);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error al obtener el elemento por ID: {ex.Message}");
+                throw new Exception($"Error al obtener el elemento con ID {id}: {ex.Message}", ex);
             }
         }
+    }
+
+    public interface IDataHandler<T> where T : class
+    {
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Controller.Configuration
 {
@@ -19,12 +20,28 @@ namespace Controller.Configuration
         public static readonly string InvoicesFile = Path.Combine(AssetsPath, "Facturas.json");
 
         /// <summary>
+        /// Asegura que el directorio de recursos exista.
         /// </summary>
         public static void EnsureAssetsFolderExists()
         {
             if (!Directory.Exists(AssetsPath))
             {
                 Directory.CreateDirectory(AssetsPath);
+            }
+        }
+
+        /// <summary>
+        /// Asegura que los archivos JSON utilizados por el sistema existan. Si no, los crea vacíos.
+        /// </summary>
+        public static void EnsureJsonFilesExist()
+        {
+            string[] files = { UsersFile, ClassesFile, InventoryFile, MembershipsFile, ReservationsFile, InvoicesFile };
+            foreach (var file in files)
+            {
+                if (!File.Exists(file))
+                {
+                    File.WriteAllText(file, "[]"); // Inicializa un archivo JSON vacío con un array.
+                }
             }
         }
     }
