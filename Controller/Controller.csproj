@@ -69,12 +69,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Asset\Clientes.json" />
-    <None Include="Asset\Entrenadores.json" />
-    <None Include="Asset\Inventario.json" />
-    <None Include="Asset\Membresias.json" />
-    <None Include="Asset\Usuarios.json" />
+    <None Include="Assets\Clientes.csv" />
+    <None Include="Assets\Entrenadores.csv" />
+    <None Include="Assets\Facturas.csv" />
+    <None Include="Assets\Inventario.csv" />
+    <None Include="Assets\Membresias.csv" />
+    <None Include="Assets\Reportes.csv" />
+    <None Include="Assets\Reservas.csv" />
+    <None Include="Assets\TiposMembresias.csv" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Clases.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
