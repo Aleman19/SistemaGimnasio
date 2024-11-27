@@ -1,8 +1,14 @@
 ﻿namespace SistemaGimnasio
+
 {
     partial class LoginForm
     {
         private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Label lblUsername;
+        private System.Windows.Forms.Label lblPassword;
+        private System.Windows.Forms.TextBox txtUsername;
+        private System.Windows.Forms.TextBox txtPassword;
+        private System.Windows.Forms.Button btnLogin;
 
         protected override void Dispose(bool disposing)
         {
@@ -15,97 +21,68 @@
 
         private void InitializeComponent()
         {
-            txtUsuario = new TextBox();
-            txtContraseña = new TextBox();
-            btnLogin = new Button();
-            btnSalir = new Button();
-            lblUsuario = new Label();
-            lblContraseña = new Label();
-            SuspendLayout();
-            // 
-            // txtUsuario
-            // 
-            txtUsuario.Location = new Point(140, 58);
-            txtUsuario.Margin = new Padding(4, 3, 4, 3);
-            txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(233, 23);
-            txtUsuario.TabIndex = 0;
-            // 
-            // txtContraseña
-            // 
-            txtContraseña.Location = new Point(140, 115);
-            txtContraseña.Margin = new Padding(4, 3, 4, 3);
-            txtContraseña.Name = "txtContraseña";
-            txtContraseña.PasswordChar = '*';
-            txtContraseña.Size = new Size(233, 23);
-            txtContraseña.TabIndex = 1;
-            // 
-            // btnLogin
-            // 
-            btnLogin.Location = new Point(140, 173);
-            btnLogin.Margin = new Padding(4, 3, 4, 3);
-            btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(88, 27);
-            btnLogin.TabIndex = 2;
-            btnLogin.Text = "Iniciar Sesión";
-            btnLogin.UseVisualStyleBackColor = true;
-            btnLogin.Click += btnLogin_Click;
-            // 
-            // btnSalir
-            // 
-            btnSalir.Location = new Point(286, 173);
-            btnSalir.Margin = new Padding(4, 3, 4, 3);
-            btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(88, 27);
-            btnSalir.TabIndex = 3;
-            btnSalir.Text = "Salir";
-            btnSalir.UseVisualStyleBackColor = true;
-            btnSalir.Click += btnSalir_Click;
-            // 
-            // lblUsuario
-            // 
-            lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(58, 61);
-            lblUsuario.Margin = new Padding(4, 0, 4, 0);
-            lblUsuario.Name = "lblUsuario";
-            lblUsuario.Size = new Size(50, 15);
-            lblUsuario.TabIndex = 4;
-            lblUsuario.Text = "Usuario:";
-            // 
-            // lblContraseña
-            // 
-            lblContraseña.AutoSize = true;
-            lblContraseña.Location = new Point(58, 119);
-            lblContraseña.Margin = new Padding(4, 0, 4, 0);
-            lblContraseña.Name = "lblContraseña";
-            lblContraseña.Size = new Size(70, 15);
-            lblContraseña.TabIndex = 5;
-            lblContraseña.Text = "Contraseña:";
-            // 
-            // LoginForm
-            // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(467, 288);
-            Controls.Add(lblContraseña);
-            Controls.Add(lblUsuario);
-            Controls.Add(btnSalir);
-            Controls.Add(btnLogin);
-            Controls.Add(txtContraseña);
-            Controls.Add(txtUsuario);
-            Margin = new Padding(4, 3, 4, 3);
-            Name = "LoginForm";
-            Text = "Inicio de Sesión";
-            Load += LoginForm_Load;
-            ResumeLayout(false);
-            PerformLayout();
-        }
+            this.lblUsername = new System.Windows.Forms.Label();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.txtUsername = new System.Windows.Forms.TextBox();
+            this.txtPassword = new System.Windows.Forms.TextBox();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.SuspendLayout();
 
-        private System.Windows.Forms.TextBox txtUsuario;
-        private System.Windows.Forms.TextBox txtContraseña;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Button btnSalir;
-        private System.Windows.Forms.Label lblUsuario;
-        private System.Windows.Forms.Label lblContraseña;
+            // lblUsername
+            this.lblUsername.AutoSize = true;
+            this.lblUsername.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblUsername.Location = new System.Drawing.Point(30, 20);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(55, 19);
+            this.lblUsername.TabIndex = 0;
+            this.lblUsername.Text = "Usuario";
+
+            // lblPassword
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPassword.Location = new System.Drawing.Point(30, 60);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(79, 19);
+            this.lblPassword.TabIndex = 1;
+            this.lblPassword.Text = "Contraseña";
+
+            // txtUsername
+            this.txtUsername.Location = new System.Drawing.Point(120, 17);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.Size = new System.Drawing.Size(150, 25);
+            this.txtUsername.TabIndex = 2;
+
+            // txtPassword
+            this.txtPassword.Location = new System.Drawing.Point(120, 57);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
+            this.txtPassword.Size = new System.Drawing.Size(150, 25);
+            this.txtPassword.TabIndex = 3;
+
+            // btnLogin
+            this.btnLogin.Location = new System.Drawing.Point(120, 95);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(150, 35);
+            this.btnLogin.TabIndex = 4;
+            this.btnLogin.Text = "Iniciar Sesión";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+
+            // LoginForm
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.ClientSize = new System.Drawing.Size(320, 150);
+            this.Controls.Add(this.btnLogin);
+            this.Controls.Add(this.txtPassword);
+            this.Controls.Add(this.txtUsername);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.lblUsername);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Login - Sistema Gimnasio";
+            this.Load += new System.EventHandler(this.LoginForm_Load);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
     }
 }
