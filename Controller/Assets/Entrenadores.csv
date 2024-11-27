@@ -1,1 +1,7 @@
-﻿
+﻿IdEntrenador,Nombre,Apellido,Username,Password,Email,Telefono,FechaContratacion,Especialidades,HorarioDisponible
+1,Ana,López,ana.lopez,abcd,ana@gmail.com,555-5678,2022-12-15,Zumba,Lunes a Viernes 8:00-14:00
+2,Carlos,Rodríguez,carlos.rod,1234,carlos@gmail.com,555-8765,2023-01-01,CardioDance,Lunes a Viernes 16:00-20:00
+3,Brandon,Jiménez,bjimenez,131415,bjimenez@gmail.com,8847-6930,2020-02-28,Spinning,Sabado a Domingo 13:00-20:30
+4,Daniela,Porras,dporras,161718,dporras@gmail.com,8845-3044,2021-07-15,HIIT,Lunes a Viernes 9:30-18:30
+5,Mario,Calderon,mcalderon,192021,mcalderon@gmail.com,4055-9984,2022-01-25,Yoga,Sabado a Domingo 6:00-15:00
+6,Paola,Fernandez,pfernandez,6789,pfernandez@gmail.com,7025-9960,2023-05-03,Spinning,Lunes a Jueves 10:30-16:30
