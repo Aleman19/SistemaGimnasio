@@ -65,8 +65,6 @@
       <Name>SistemaGimnasio</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-<<<<<<< Updated upstream
     <None Include="Assets\Clientes.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -91,7 +89,6 @@
     <None Include="Assets\TiposMembresias.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-=======
     <None Include="Assets\Clientes.csv" />
     <None Include="Assets\Entrenadores.csv" />
     <None Include="Assets\Facturas.csv" />
@@ -99,10 +96,8 @@
     <None Include="Assets\Membresias.csv" />
     <None Include="Assets\Reservas.csv" />
     <None Include="Assets\TiposMembresias.csv" />
->>>>>>> Stashed changes
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
     <None Include="Assets\Clases.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
