@@ -1,9 +1,12 @@
-﻿namespace Model
-{ 
-public class Entrenador
+﻿public class Entrenador
 {
-    public string Id { get; set; } // Identificador único del entrenadorpublic string Nombre { get; set; }
-    public string Apellido { get; set; }
-    public string Especialidades { get; set; } // Lista separada por comaspublic string Horarios { get; set; } // Texto descriptivo de horariospublic string Email { get; set; }
-}
+    public int IdEntrenador { get; set; }
+    public string Nombre { get; set; } = string.Empty;
+    public string Apellido { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Telefono { get; set; } = string.Empty;
+    public DateTime FechaInicio { get; set; } = DateTime.Now; // Valor predeterminado
+    public string Especialidad { get; set; } = string.Empty;
 }

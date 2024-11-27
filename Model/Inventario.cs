@@ -1,9 +1,8 @@
-﻿namespace Model
+﻿public class Factura
 {
-    public class Inventario
-    {
-        public string Id { get; set; } // Identificador único del artículopublic string Nombre { get; set; } // Nombre del equipo o artículopublic string Categoria { get; set; } // Por ejemplo: "Máquina", "Pesas"public DateTime FechaAdquisicion { get; set; }
-        public int VidaUtilMeses { get; set; }
-        public bool EnUso { get; set; } // Indica si el equipo está activo
-    }
+    public int IdFactura { get; set; }
+    public int IdCliente { get; set; }
+    public DateTime FechaFactura { get; set; } = DateTime.Now; // Valor predeterminado
+    public decimal Monto { get; set; } = 0; // Valor predeterminado
+    public string Descripcion { get; set; } = string.Empty; // Valor predeterminado
 }

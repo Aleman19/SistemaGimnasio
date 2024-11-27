@@ -1,13 +1,8 @@
-﻿using System;
-
-namespace Model
+﻿public class Factura
 {
-    public class Factura
-    {
-        public string Id { get; set; }
-        public string ClienteId { get; set; }
-        public DateTime FechaEmision { get; set; } // Asegúrate de que esta propiedad existe
-        public decimal Total { get; set; }
-        public string Detalles { get; set; }
-    }
+    public int IdFactura { get; set; }
+    public int IdCliente { get; set; }
+    public DateTime FechaFactura { get; set; } = DateTime.Now; // Valor predeterminado
+    public decimal Monto { get; set; } = 0; // Valor predeterminado
+    public string Descripcion { get; set; } = string.Empty; // Valor predeterminado
 }

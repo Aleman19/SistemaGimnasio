@@ -1,14 +1,11 @@
-﻿using System;
-
-
-namespace Model
+﻿namespace Models
 {
     public class Membresia
     {
-        public string Id { get; set; } // Identificador único de la membresíapublic string ClienteId { get; set; } // Relación con el clientepublic DateTime FechaInicio { get; set; }
-        public DateTime FechaFin { get; set; }
-        public decimal Costo { get; set; }
-        public string Tipo { get; set; } // Por ejemplo: "Mensual", "Anual"
+        public int IdMembresia { get; set; }
+        public int IdCliente { get; set; }
+        public DateTime FechaInicio { get; set; } = DateTime.Now; // Valor predeterminado
+        public DateTime FechaFin { get; set; } = DateTime.Now.AddMonths(1); // Ejemplo: Duración predeterminada de 1 mes
+        public string Estado { get; set; } = "Activa"; // Estado inicial predeterminado
     }
 }
-
