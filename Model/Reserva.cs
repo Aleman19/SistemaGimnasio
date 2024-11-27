@@ -1,12 +1,11 @@
-﻿using System;
-
-namespace Model
+﻿namespace Models
 {
     public class Reserva
     {
-        public string Id { get; set; }
-        public string ClienteId { get; set; }
-        public string ClaseId { get; set; } // Asegúrate de que esta propiedad existe
-        public DateTime FechaReserva { get; set; } // Asegúrate de que esta propiedad existe
+        public int IdReserva { get; set; }
+        public int IdClase { get; set; }
+        public int IdCliente { get; set; }
+        public DateTime FechaReserva { get; set; } = DateTime.Now; // Valor predeterminado
+        public string Estado { get; set; } = "Pendiente"; // Estado inicial predeterminado
     }
 }

@@ -1,11 +1,13 @@
-﻿namespace Model
+﻿public class Cliente
 {
-    public class Cliente
-{
-    public string Id { get; set; } // Identificador único del clientepublic string Nombre { get; set; }
-    public string Apellido { get; set; }
-    public string Email { get; set; }
-    public string Telefono { get; set; }
-    public string MembresiaId { get; set; } // Relación con la membresíapublic DateTime FechaRegistro { get; set; }
-}
+    public int IdCliente { get; set; }
+    public string Nombre { get; set; } = string.Empty;
+    public string Apellido { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Telefono { get; set; } = string.Empty;
+    public DateTime FechaRegistro { get; set; } = DateTime.Now;
+    public string EstadoMembresia { get; set; } = "Activa"; // Valor predeterminado
+    public DateTime FechaFinMembresia { get; set; } = DateTime.MaxValue;
 }
