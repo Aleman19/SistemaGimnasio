@@ -1,4 +1,4 @@
-﻿ IdFactura,IdCliente,FechaFactura,Monto,Descripcion
+﻿IdFactura,IdCliente,FechaFactura,Monto,Descripcion
 1,1,2023-11-01,50.00,Membresía mensual
 2,1,2023-10-01,50.00,Membresía mensual
 3,2,2023-09-15,75.00,Clase funcional
