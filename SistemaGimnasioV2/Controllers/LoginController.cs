@@ -1,24 +1,38 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-[ApiController]
-[Route("api/[controller]")]
-public class LoginController : ControllerBase
+namespace GestiónGimnasioMVC.Controllers
 {
-    private readonly GymDbContext _context;
-
-    public LoginController(GymDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LoginController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly GymDbContext _context;
 
-    [HttpPost]
-    public IActionResult Login([FromBody] LoginRequest request)
-    {
-        var user = _context.Users.FirstOrDefault(u => u.Cedula == request.Cedula && u.Password == request.Password);
+        public LoginController(GymDbContext context)
+        {
+            _context = context;
+        }
 
-        if (user == null)
-            return Unauthorized(new { message = "Credenciales inválidas" });
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Cedula) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest(new { message = "Cédula y contraseña son obligatorias" });
+            }
 
-        return Ok(new { Role = user.Role, Message = "Login exitoso" });
+            var user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Cedula == request.Cedula && u.Password == request.Password);
+
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Credenciales inválidas" });
+            }
+
+            // Devuelve el rol para redirigir al usuario al dashboard correspondiente
+            return Ok(new { Role = user.Role, UserId = user.Id, Message = "Login exitoso" });
+        }
     }
 }
