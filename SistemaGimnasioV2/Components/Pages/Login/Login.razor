@@ -1,5 +1,33 @@
-﻿<h3>Login</h3>
-
+﻿@page "/login"
+@inject HttpClient Http
 @code {
+    private LoginRequest login = new LoginRequest();
+    private string? errorMessage;
 
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Login", login);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                var role = result?.Role;
+                if (role == "Administrador")
+                    NavigationManager.NavigateTo("/admin/dashboard");
+                else if (role == "Entrenador")
+                    NavigationManager.NavigateTo("/trainer/dashboard");
+                else if (role == "Cliente")
+                    NavigationManager.NavigateTo("/client/dashboard");
+            }
+            else
+            {
+                errorMessage = "Credenciales inválidas";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
 }
