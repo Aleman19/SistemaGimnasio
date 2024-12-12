@@ -1,5 +1,60 @@
-﻿<h3>ReserveClass</h3>
+﻿@page "/client/reserveclass"
+@inject HttpClient Http
+
+<h3>Reservar Clases</h3>
+
+<div class="form-group">
+    <label for="classSelection">Seleccione una Clase</label>
+    <select id="classSelection" class="form-control" @bind="SelectedClassId">
+        @if (Classes != null)
+        {
+            foreach (var gymClass in Classes)
+            {
+                <option value="@gymClass.Id">@gymClass.Name - @gymClass.Schedule</option>
+            }
+        }
+    </select>
+</div>
+
+<button class="btn btn-primary" @onclick="ReserveClass">Reservar</button>
+<p class="text-success">@SuccessMessage</p>
+<p class="text-danger">@ErrorMessage</p>
 
 @code {
+    private List<Class>? Classes;
+    private int SelectedClassId;
+    private string? SuccessMessage;
+    private string? ErrorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
+    }
+
+    private async Task ReserveClass()
+    {
+        try
+        {
+            var reservation = new Reservation
+                {
+                    ClassId = SelectedClassId,
+                    ClientId = 1 // Reemplaza "1" con el ID del cliente autenticado
+                };
+
+            var response = await Http.PostAsJsonAsync("api/Reservation", reservation);
+
+            if (response.IsSuccessStatusCode)
+            {
+                SuccessMessage = "Clase reservada exitosamente.";
+            }
+            else
+            {
+                ErrorMessage = "Error al reservar la clase.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
 }

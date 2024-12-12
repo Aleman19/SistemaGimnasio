@@ -1,5 +1,59 @@
-﻿<h3>ManageClasses</h3>
+﻿@page "/trainer/manageclasses"
+@inject HttpClient Http
+
+<h3>Gestión de Clases</h3>
+
+<button class="btn btn-primary" @onclick="AddNewClass">Agregar Clase</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Horario</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Classes != null)
+        {
+            foreach (var gymClass in Classes)
+            {
+                <tr>
+                    <td>@gymClass.Name</td>
+                    <td>@gymClass.Schedule</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditClass(gymClass.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteClass(gymClass.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<Class>? Classes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
+    }
+
+    private async Task DeleteClass(int classId)
+    {
+        await Http.DeleteAsync($"api/Class/{classId}");
+        Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
+    }
+
+    private void AddNewClass()
+    {
+        // Redirigir al formulario para agregar una nueva clase
+        NavigationManager.NavigateTo("/trainer/addclass");
+    }
+
+    private void EditClass(int classId)
+    {
+        // Redirigir al formulario para editar una clase existente
+        NavigationManager.NavigateTo($"/trainer/editclass/{classId}");
+    }
 }
