@@ -1,6 +1,7 @@
-using SistemaGimnasioV2.Components;
 using GestiónGimnasioMVC.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Paket;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GymDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Agregar servicios adicionales
+// Agregar servicios de autenticación y autorización
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.AccessDeniedPath = "/accessdenied";
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
+    options.AddPolicy("TrainerOnly", policy => policy.RequireRole("Entrenador"));
+    options.AddPolicy("ClientOnly", policy => policy.RequireRole("Cliente"));
+});
+
+// Registrar servicios personalizados
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<AuthService>();
+
+// Agregar servicios de Blazor y Razor Pages
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -26,6 +46,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Habilitar autenticación y autorización
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
