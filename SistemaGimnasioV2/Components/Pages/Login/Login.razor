@@ -1,5 +1,9 @@
 ﻿@page "/login"
 @inject HttpClient Http
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
 @code {
     private LoginRequest login = new LoginRequest();
     private string? errorMessage;
