@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GestiónGimnasioMVC.Data;
-using GestiónGimnasioMVC.Model;
 
 namespace GestiónGimnasioMVC.Controllers
 {
