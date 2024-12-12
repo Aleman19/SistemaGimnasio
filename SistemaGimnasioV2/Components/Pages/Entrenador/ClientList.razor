@@ -1,5 +1,36 @@
-﻿<h3>ClientList</h3>
+﻿@page "/trainer/clientlist"
+@inject HttpClient Http
+
+<h3>Lista de Clientes en Clase</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre del Cliente</th>
+            <th>Clase</th>
+            <th>Horario</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Reservations != null)
+        {
+            foreach (var reservation in Reservations)
+            {
+                <tr>
+                    <td>@reservation.Client.Name</td>
+                    <td>@reservation.GymClass.Name</td>
+                    <td>@reservation.GymClass.Schedule</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<Reservation>? Reservations;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Reservations = await Http.GetFromJsonAsync<List<Reservation>>("api/Trainer/clients");
+    }
 }

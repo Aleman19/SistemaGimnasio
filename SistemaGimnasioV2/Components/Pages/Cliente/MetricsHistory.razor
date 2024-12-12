@@ -1,5 +1,36 @@
-﻿<h3>MetricsHistory</h3>
+﻿@page "/client/metricshistory"
+@inject HttpClient Http
+
+<h3>Historial de Métricas</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo de Métrica</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Metrics != null)
+        {
+            foreach (var metric in Metrics)
+            {
+                <tr>
+                    <td>@metric.Date.ToShortDateString()</td>
+                    <td>@metric.MetricType</td>
+                    <td>@metric.Value</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<ProgressMetric>? Metrics;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Metrics = await Http.GetFromJsonAsync<List<ProgressMetric>>("api/Client/1/metrics"); // Reemplaza "1" con el ID del cliente autenticado
+    }
 }
