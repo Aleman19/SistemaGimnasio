@@ -1,5 +1,122 @@
-﻿<h3>GenerateInvoices</h3>
+﻿@page "/trainer/generateinvoices"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Generar Facturas</h3>
+
+<div class="form-group">
+    <label for="clientSelection">Seleccione un Cliente</label>
+    <select id="clientSelection" class="form-control" @bind="SelectedClientId">
+        <option value="">Seleccione un cliente</option>
+        @if (Clients != null)
+        {
+            foreach (var client in Clients)
+            {
+                <option value="@client.Id">@client.Name (@client.Cedula)</option>
+            }
+        }
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="invoiceDetails">Detalles de la Factura</label>
+    <textarea id="invoiceDetails" class="form-control" @bind="NewInvoice.Details"></textarea>
+</div>
+
+<div class="form-group">
+    <label for="invoiceTotal">Total</label>
+    <input type="number" id="invoiceTotal" class="form-control" @bind="NewInvoice.Total" />
+</div>
+
+<button class="btn btn-primary" @onclick="GenerateInvoice" disabled="@(!IsFormValid)">Generar Factura</button>
+
+<p class="text-success">@SuccessMessage</p>
+<p class="text-danger">@ErrorMessage</p>
+
+<table class="table mt-4" @if="Invoices != null">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Detalles</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invoice in Invoices)
+        {
+            <tr>
+                <td>@invoice.Date.ToShortDateString()</td>
+                <td>@invoice.Client.Name</td>
+                <td>@invoice.Total:C</td>
+                <td>@invoice.Details</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<User>? Clients;
+    private List<Invoice>? Invoices;
+    private int? SelectedClientId;
+    private Invoice NewInvoice = new Invoice();
+    private string? SuccessMessage;
+    private string? ErrorMessage;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Cargar clientes
+            Clients = await Http.GetFromJsonAsync<List<User>>("api/Admin/users");
+
+            // Cargar facturas existentes
+            Invoices = await Http.GetFromJsonAsync<List<Invoice>>("api/Billing");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Error al cargar los datos: " + ex.Message;
+        }
+    }
+
+    private bool IsFormValid => SelectedClientId.HasValue && !string.IsNullOrWhiteSpace(NewInvoice.Details) && NewInvoice.Total > 0;
+
+    private async Task GenerateInvoice()
+    {
+        try
+        {
+            if (!SelectedClientId.HasValue)
+            {
+                ErrorMessage = "Debe seleccionar un cliente.";
+                return;
+            }
+
+            // Crear la factura
+            NewInvoice.ClientId = SelectedClientId.Value;
+            NewInvoice.Date = DateTime.Now;
+
+            var response = await Http.PostAsJsonAsync("api/Billing", NewInvoice);
+
+            if (response.IsSuccessStatusCode)
+            {
+                SuccessMessage = "Factura generada exitosamente.";
+                ErrorMessage = null;
+
+                // Recargar facturas
+                Invoices = await Http.GetFromJsonAsync<List<Invoice>>("api/Billing");
+
+                // Resetear formulario
+                NewInvoice = new Invoice();
+                SelectedClientId = null;
+            }
+            else
+            {
+                ErrorMessage = "Error al generar la factura.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Error: " + ex.Message;
+        }
+    }
 }
