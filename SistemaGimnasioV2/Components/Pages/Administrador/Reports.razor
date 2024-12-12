@@ -1,5 +1,49 @@
-﻿<h3>Reports</h3>
+﻿@page "/admin/reports"
+@inject HttpClient Http
+
+<h3>Generar Reportes</h3>
+
+<div class="form-group">
+    <label>Seleccione el tipo de reporte:</label>
+    <select class="form-control" @bind="SelectedReport">
+        <option value="membership">Reporte de Membresías</option>
+        <option value="financial">Reporte Contable</option>
+        <option value="classes">Reporte de Clases</option>
+    </select>
+</div>
+
+<button class="btn btn-primary" @onclick="GenerateReport">Generar Reporte</button>
+<p class="text-success">@SuccessMessage</p>
+<p class="text-danger">@ErrorMessage</p>
 
 @code {
+    private string SelectedReport = "membership";
+    private string? SuccessMessage;
+    private string? ErrorMessage;
 
+    private async Task GenerateReport()
+    {
+        try
+        {
+            if (SelectedReport == "membership")
+            {
+                var response = await Http.GetStreamAsync("api/Report/membership");
+                SuccessMessage = "El reporte de membresías se ha generado correctamente.";
+            }
+            else if (SelectedReport == "financial")
+            {
+                var response = await Http.GetStreamAsync("api/Report/financial");
+                SuccessMessage = "El reporte contable se ha generado correctamente.";
+            }
+            else if (SelectedReport == "classes")
+            {
+                var response = await Http.GetStreamAsync("api/Report/classes/csv");
+                SuccessMessage = "El reporte de clases se ha generado correctamente en CSV.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Error al generar el reporte: " + ex.Message;
+        }
+    }
 }

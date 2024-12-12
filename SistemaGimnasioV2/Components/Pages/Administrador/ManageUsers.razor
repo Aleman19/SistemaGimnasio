@@ -1,5 +1,63 @@
-﻿<h3>ManageUsers</h3>
+﻿@page "/admin/manageusers"
+@inject HttpClient Http
+
+<h3>Gestión de Usuarios</h3>
+
+<button class="btn btn-primary" @onclick="AddNewUser">Agregar Usuario</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cédula</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Email</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Users != null)
+        {
+            foreach (var user in Users)
+            {
+                <tr>
+                    <td>@user.Cedula</td>
+                    <td>@user.Name</td>
+                    <td>@user.Role</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditUser(user.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteUser(user.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<User>? Users;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await Http.GetFromJsonAsync<List<User>>("api/Admin/users");
+    }
+
+    private async Task DeleteUser(int userId)
+    {
+        await Http.DeleteAsync($"api/Admin/users/{userId}");
+        Users = await Http.GetFromJsonAsync<List<User>>("api/Admin/users");
+    }
+
+    private void AddNewUser()
+    {
+        // Redirigir a un formulario para agregar un nuevo usuario
+        NavigationManager.NavigateTo("/admin/adduser");
+    }
+
+    private void EditUser(int userId)
+    {
+        // Redirigir a un formulario para editar un usuario existente
+        NavigationManager.NavigateTo($"/admin/edituser/{userId}");
+    }
 }

@@ -1,5 +1,13 @@
-﻿<h3>Logout</h3>
+﻿@page "/logout"
+@inject NavigationManager NavigationManager
+
+<h3>Cerrar Sesión</h3>
+<p>Has cerrado sesión con éxito.</p>
+<button class="btn btn-primary" @onclick="NavigateToLogin">Volver al Login</button>
 
 @code {
-
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
 }
