@@ -1,5 +1,63 @@
-﻿<h3>ManageInventory</h3>
+﻿@page "/admin/manageinventory"
+@inject HttpClient Http
+
+<h3>Gestión de Inventario</h3>
+
+<button class="btn btn-primary" @onclick="AddNewItem">Agregar Item</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha de Compra</th>
+            <th>Vida Útil</th>
+            <th>Costo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (InventoryItems != null)
+        {
+            foreach (var item in InventoryItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.PurchaseDate.ToShortDateString()</td>
+                    <td>@item.LifeSpan meses</td>
+                    <td>@item.Cost</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditItem(item.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteItem(item.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<InventoryItem>? InventoryItems;
 
+    protected override async Task OnInitializedAsync()
+    {
+        InventoryItems = await Http.GetFromJsonAsync<List<InventoryItem>>("api/Inventory");
+    }
+
+    private async Task DeleteItem(int itemId)
+    {
+        await Http.DeleteAsync($"api/Inventory/{itemId}");
+        InventoryItems = await Http.GetFromJsonAsync<List<InventoryItem>>("api/Inventory");
+    }
+
+    private void AddNewItem()
+    {
+        // Redirigir a un formulario para agregar un nuevo item
+        NavigationManager.NavigateTo("/admin/additem");
+    }
+
+    private void EditItem(int itemId)
+    {
+        // Redirigir a un formulario para editar un item existente
+        NavigationManager.NavigateTo($"/admin/edititem/{itemId}");
+    }
 }

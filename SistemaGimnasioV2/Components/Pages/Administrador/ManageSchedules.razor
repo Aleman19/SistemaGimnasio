@@ -1,5 +1,61 @@
-﻿<h3>ManageSchedules</h3>
+﻿@page "/admin/manageschedules"
+@inject HttpClient Http
+
+<h3>Gestión de Horarios</h3>
+
+<button class="btn btn-primary" @onclick="AddNewSchedule">Agregar Horario</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Clase</th>
+            <th>Entrenador</th>
+            <th>Horario</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Classes != null)
+        {
+            foreach (var gymClass in Classes)
+            {
+                <tr>
+                    <td>@gymClass.Name</td>
+                    <td>@gymClass.Trainer.Name</td>
+                    <td>@gymClass.Schedule</td>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => EditSchedule(gymClass.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteSchedule(gymClass.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
 @code {
+    private List<Class>? Classes;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
+    }
+
+    private async Task DeleteSchedule(int classId)
+    {
+        await Http.DeleteAsync($"api/Class/{classId}");
+        Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
+    }
+
+    private void AddNewSchedule()
+    {
+        // Redirigir al formulario para agregar un nuevo horario
+        NavigationManager.NavigateTo("/admin/addschedule");
+    }
+
+    private void EditSchedule(int classId)
+    {
+        // Redirigir al formulario para editar un horario existente
+        NavigationManager.NavigateTo($"/admin/editschedule/{classId}");
+    }
 }
