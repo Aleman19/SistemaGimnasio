@@ -1,5 +1,8 @@
-﻿public class LoginRequest
+﻿namespace GestiónGimnasioMVC.Model
 {
-    public string Cedula { get; set; }
-    public string Password { get; set; }
+    public class LoginRequest
+    {
+        public string Cedula { get; set; }
+        public string Password { get; set; }
+    }
 }
