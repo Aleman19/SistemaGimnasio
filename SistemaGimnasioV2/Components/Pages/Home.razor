@@ -1,7 +1,53 @@
-﻿@page "/"
+﻿
+@page "/"
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Inicio</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="jumbotron text-center">
+    <h1>Bienvenido a Gestión Gimnasio</h1>
+    <p>Administra tus métricas, clases y mucho más en un solo lugar.</p>
+</div>
 
-Welcome to your new app.
+@if (!string.IsNullOrWhiteSpace(Role))
+{
+    <div class="text-center mt-4">
+        <p>Redirigiendo a tu panel...</p>
+    </div>
+}
+else
+{
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" @onclick="GoToLogin">Iniciar Sesión</button>
+    </div>
+}
+
+@code {
+    private string? Role;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Obtener el rol actual del usuario
+        Role = AuthService.GetCurrentUserRole();
+
+        // Redirigir al Dashboard según el rol
+        if (Role == "Administrador")
+        {
+            NavigationManager.NavigateTo("/admin/dashboard", forceLoad: true);
+        }
+        else if (Role == "Entrenador")
+        {
+            NavigationManager.NavigateTo("/trainer/dashboard", forceLoad: true);
+        }
+        else if (Role == "Cliente")
+        {
+            NavigationManager.NavigateTo("/client/dashboard", forceLoad: true);
+        }
+    }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}
