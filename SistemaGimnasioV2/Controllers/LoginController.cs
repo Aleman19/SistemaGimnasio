@@ -1,9 +1,9 @@
-﻿using GestiónGimnasioMVC.Data;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SistemaGimnasioV2.Models;  // Asegúrate de que este espacio de nombres esté correctamente referenciado
+using GestiónGimnasioMVC.Data;
 
-namespace GestiónGimnasioMVC.Controllers
+namespace SistemaGimnasioV2.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -34,7 +34,7 @@ namespace GestiónGimnasioMVC.Controllers
             }
 
             // Devuelve el rol para redirigir al usuario al dashboard correspondiente
-            return Ok(new { Role = user.Role, UserId = user.Id, Message = "Login exitoso" });
+            return Ok(new { user.Role, UserId = user.Id, Message = "Login exitoso" });
         }
     }
 }

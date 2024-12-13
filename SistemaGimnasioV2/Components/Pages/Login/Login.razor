@@ -1,10 +1,39 @@
 ﻿@page "/login"
 @using GestiónGimnasioMVC.Data
 @using GestiónGimnasioMVC.Model
+@using Microsoft.AspNetCore.Identity.Data
 @inject HttpClient Http
 @inject GymDbContext DbContext
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+
+<h3>Login</h3>
+
+<EditForm Model="@login" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="email">Email:</label>
+        <!-- Updated binding syntax -->
+        <InputText id="email" @bind-Value="login.Email" />
+    </div>
+
+    <div>
+        <label for="password">Password:</label>
+        <!-- Updated binding syntax -->
+        <InputText id="password" @bind-Value="login.Password" type="password" />
+    </div>
+
+    <div>
+        <button type="submit">Login</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+</EditForm>
 
 @code {
     private LoginRequest login = new LoginRequest();

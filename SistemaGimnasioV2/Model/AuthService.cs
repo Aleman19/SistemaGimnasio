@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace GestiónGimnasioMVC.Services
@@ -17,23 +16,39 @@ namespace GestiónGimnasioMVC.Services
         // Método para iniciar sesión
         public async Task SignInAsync(string cedula, string role)
         {
-            var claims = new List<Claim>
+            try
             {
-                new Claim(ClaimTypes.Name, cedula),
-                new Claim(ClaimTypes.Role, role)
-            };
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, cedula),
+                    new Claim(ClaimTypes.Role, role)
+                };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await _contextAccessor.HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                await _contextAccessor.HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+            }
+            catch (Exception ex)
+            {
+                // Aquí puedes registrar el error o hacer algún manejo adicional
+                throw new InvalidOperationException("Error during sign-in process", ex);
+            }
         }
 
         // Método para cerrar sesión
         public async Task SignOutAsync()
         {
-            await _contextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            try
+            {
+                await _contextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+            catch (Exception ex)
+            {
+                // Aquí también puedes registrar el error o manejarlo
+                throw new InvalidOperationException("Error during sign-out process", ex);
+            }
         }
 
         // Método para obtener el rol actual
