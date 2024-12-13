@@ -58,7 +58,7 @@ namespace GestiónGimnasioMVC.Controllers
                 .ToListAsync();
 
             using var stream = new MemoryStream();
-            var document = new Document();
+            var document = new iTextSharp.text.Document();
             PdfWriter.GetInstance(document, stream);
             document.Open();
 
