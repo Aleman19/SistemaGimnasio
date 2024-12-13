@@ -1,3 +1,4 @@
+using GestiónGimnasioMVC.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace GestiónGimnasioMVC.Controllers
