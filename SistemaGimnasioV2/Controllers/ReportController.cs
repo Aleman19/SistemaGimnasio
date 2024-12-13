@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using GestiónGimnasioMVC.Data;
 using iTextSharp.text.pdf;
 using iTextSharp.text;
+using Document = iTextSharp.text.Document;
 
 namespace GestiónGimnasioMVC.Controllers
 {
