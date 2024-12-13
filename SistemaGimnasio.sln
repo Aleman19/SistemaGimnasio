@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaGimnasio", "SistemaG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller", "Controller\Controller.csproj", "{52D225B3-8975-46BB-88A0-2653B8C8016A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Model\Models.csproj", "{05C7702B-9794-4A3F-860A-43074692DDDF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaGimnasioV2", "SistemaGimnasioV2\SistemaGimnasioV2.csproj", "{57886E9C-83B5-48BB-B6CA-DD0FF2B38F95}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{52D225B3-8975-46BB-88A0-2653B8C8016A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52D225B3-8975-46BB-88A0-2653B8C8016A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52D225B3-8975-46BB-88A0-2653B8C8016A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05C7702B-9794-4A3F-860A-43074692DDDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05C7702B-9794-4A3F-860A-43074692DDDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05C7702B-9794-4A3F-860A-43074692DDDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05C7702B-9794-4A3F-860A-43074692DDDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{57886E9C-83B5-48BB-B6CA-DD0FF2B38F95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{57886E9C-83B5-48BB-B6CA-DD0FF2B38F95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57886E9C-83B5-48BB-B6CA-DD0FF2B38F95}.Release|Any CPU.ActiveCfg = Release|Any CPU
