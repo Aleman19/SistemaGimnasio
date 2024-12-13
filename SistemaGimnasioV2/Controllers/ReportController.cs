@@ -2,6 +2,9 @@
 using System.Reflection.Metadata;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using GestiónGimnasioMVC.Data;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 namespace GestiónGimnasioMVC.Controllers
 {
@@ -54,7 +57,7 @@ namespace GestiónGimnasioMVC.Controllers
                 .ToListAsync();
 
             using var stream = new MemoryStream();
-            var document = new Document();
+            var document = new iTextSharp.text.Document();
             PdfWriter.GetInstance(document, stream);
             document.Open();
 
