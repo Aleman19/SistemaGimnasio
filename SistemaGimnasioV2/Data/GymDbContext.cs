@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GestiónGimnasioMVC.Model;
+using SistemaGimnasioV2.Model;
 
 namespace GestiónGimnasioMVC.Data
 {
@@ -7,14 +8,15 @@ namespace GestiónGimnasioMVC.Data
     {
         public GymDbContext(DbContextOptions<GymDbContext> options) : base(options) { }
 
-        // Configuración de DbSets para cada modelo
-        public DbSet<User> Users { get; set; }
-        public DbSet<Membership> Memberships { get; set; }
-        public DbSet<Class> Classes { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<InventoryItem> InventoryItems { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<ProgressMetric> ProgressMetrics { get; set; }
+        public required DbSet<User> Users { get; set; }
+        public required DbSet<Membership> Memberships { get; set; }
+        public required DbSet<Class> Classes { get; set; }
+        public required DbSet<Reservation> Reservations { get; set; }
+        public required DbSet<InventoryItem> InventoryItems { get; set; }
+        public required DbSet<Invoice> Invoices { get; set; }
+        public required DbSet<ProgressMetric> ProgressMetrics { get; set; }
+        public required DbSet<ClassSchedule> ClassSchedules { get; set; }
+
 
         // Configuración personalizada de las tablas
         protected override void OnModelCreating(ModelBuilder modelBuilder)

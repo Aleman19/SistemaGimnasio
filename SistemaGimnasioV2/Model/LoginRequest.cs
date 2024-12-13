@@ -1,8 +1,15 @@
-﻿namespace GestiónGimnasioMVC.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GestiónGimnasioMVC.Model
 {
     public class LoginRequest
     {
-        public string Cedula { get; set; }
-        public string Password { get; set; }
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        public required string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        public required string Password { get; set; }
     }
 }
+
+
