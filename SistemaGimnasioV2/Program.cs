@@ -26,12 +26,15 @@ builder.Services.AddAuthorization(options =>
 
 // Registrar servicios personalizados
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthService>(); // Registro correcto
+
 
 // Agregar servicios de Blazor y Razor Pages
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+
 
 var app = builder.Build();
 
