@@ -1,4 +1,6 @@
-﻿public class Entrenador
+﻿using System;
+
+public class Entrenador
 {
     public int IdEntrenador { get; set; }
     public string Nombre { get; set; } = string.Empty;

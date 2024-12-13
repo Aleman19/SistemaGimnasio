@@ -1,4 +1,6 @@
-﻿public class Factura
+﻿using System;
+
+public class Factura
 {
     public int IdFactura { get; set; }
     public int IdCliente { get; set; }

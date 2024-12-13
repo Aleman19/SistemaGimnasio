@@ -17,7 +17,7 @@
     </select>
 </div>
 
-<button class="btn btn-primary" @onclick="ReserveClass">Reservar</button>
+<button class="btn btn-primary" @onclick="SubmitReservation">Reservar</button>
 <p class="text-success">@SuccessMessage</p>
 <p class="text-danger">@ErrorMessage</p>
 
@@ -32,7 +32,7 @@
         Classes = await Http.GetFromJsonAsync<List<Class>>("api/Class");
     }
 
-    private async Task ReserveClass()
+    private async Task SubmitReservation()
     {
         try
         {
