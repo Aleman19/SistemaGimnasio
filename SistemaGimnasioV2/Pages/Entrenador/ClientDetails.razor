@@ -1,0 +1,93 @@
+﻿@page "/Entrenador/ClientDetails/{clientId:int}"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Detalles del Cliente</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando...</div>
+}
+else if (clientDetails == null)
+{
+    <div class="alert alert-danger">No se encontró la información del cliente.</div>
+}
+else
+{
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>@clientDetails.FullName</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Correo Electrónico:</strong> @clientDetails.Email</li>
+                <li class="list-group-item"><strong>Teléfono:</strong> @clientDetails.Phone</li>
+                <li class="list-group-item"><strong>Fecha de Registro:</strong> @clientDetails.RegisteredDate.ToString("dd/MM/yyyy")</li>
+                <li class="list-group-item"><strong>Entrenador Asignado:</strong> @clientDetails.TrainerName</li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary" @onclick="NavigateBack">
+                <i class="bi bi-arrow-left"></i> Volver a la Lista
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int clientId { get; set; } // Parámetro para recibir el ID del cliente en la URL
+
+    private bool isLoading = true;
+    private ClientDetailsModel? clientDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Buscar los detalles del cliente en la base de datos
+            clientDetails = await DbContext.Users
+                .Where(u => u.Id == clientId)
+                .Select(u => new ClientDetailsModel
+                    {
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        Phone = u.PhoneNumber ?? "No proporcionado",
+                        RegisteredDate = u.RegisteredDate ?? DateTime.MinValue,
+                        TrainerName = u.AssignedTrainer != null ? u.AssignedTrainer.FullName : "No asignado"
+                    })
+                .FirstOrDefaultAsync();
+
+            if (clientDetails == null)
+            {
+                Console.WriteLine("No se encontró el cliente.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los detalles del cliente: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/Entrenador/ClientList");
+    }
+
+    // Clase local para los detalles del cliente
+    private class ClientDetailsModel
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public DateTime RegisteredDate { get; set; }
+        public string TrainerName { get; set; } = string.Empty;
+    }
+}

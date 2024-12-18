@@ -1,0 +1,111 @@
+﻿@page "/Administrador/AddInventoryItem"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Agregar Nuevo Ítem de Inventario</h3>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <!-- Formulario para agregar un nuevo ítem -->
+        <EditForm Model="@newItem" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Campo: Nombre del ítem -->
+            <div class="mb-3">
+                <label for="itemName" class="form-label">Nombre del Ítem:</label>
+                <InputText id="itemName" @bind-Value="newItem.Name" class="form-control" />
+            </div>
+
+            <!-- Campo: Cantidad -->
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Cantidad:</label>
+                <InputNumber id="quantity" @bind-Value="newItem.Quantity" class="form-control" />
+            </div>
+
+            <!-- Campo: Precio -->
+            <div class="mb-3">
+                <label for="price" class="form-label">Precio:</label>
+                <InputNumber id="price" @bind-Value="newItem.Price" class="form-control" step="0.01" />
+            </div>
+
+            <!-- Campo: Fecha de Compra -->
+            <div class="mb-3">
+                <label for="purchaseDate" class="form-label">Fecha de Compra:</label>
+                <InputDate id="purchaseDate" @bind-Value="newItem.PurchaseDate" class="form-control" />
+            </div>
+
+            <!-- Campo: Vida Útil en Meses -->
+            <div class="mb-3">
+                <label for="lifeSpan" class="form-label">Vida Útil (en meses):</label>
+                <InputNumber id="lifeSpan" @bind-Value="newItem.LifeSpanMonths" class="form-control" />
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> Guardar Ítem
+                </button>
+                <a href="/Administrador/ManageInventory" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </EditForm>
+
+        <!-- Mensaje de error -->
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    private InventoryItem newItem = new InventoryItem(); // Modelo para el ítem a agregar
+    private string errorMessage = string.Empty;         // Mensaje de error
+
+    // Método que se ejecuta al enviar el formulario
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Validación adicional (ejemplo: no permitir nombres duplicados)
+            var existingItem = await DbContext.InventoryItems
+                .FirstOrDefaultAsync(i => i.Name == newItem.Name);
+
+            if (existingItem != null)
+            {
+                errorMessage = "Ya existe un ítem con este nombre.";
+                return;
+            }
+
+            if (newItem.PurchaseDate == DateTime.MinValue)
+            {
+                errorMessage = "La fecha de compra es obligatoria.";
+                return;
+            }
+
+            if (newItem.LifeSpanMonths <= 0)
+            {
+                errorMessage = "La vida útil debe ser mayor a 0.";
+                return;
+            }
+
+            // Agregar el nuevo ítem al inventario
+            DbContext.InventoryItems.Add(newItem);
+            await DbContext.SaveChangesAsync();
+
+            // Redirigir a la página de gestión del inventario
+            NavigationManager.NavigateTo("/Administrador/ManageInventory");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el ítem: {ex.Message}");
+            errorMessage = "Ocurrió un error al guardar el ítem. Intente nuevamente.";
+        }
+    }
+}

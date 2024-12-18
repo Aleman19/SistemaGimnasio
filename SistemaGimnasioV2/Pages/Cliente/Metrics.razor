@@ -1,0 +1,67 @@
+﻿@page "/Cliente/Metrics"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@using System.Security.Claims
+@inject GymDbContext DbContext
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Tus Métricas</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando métricas...</div>
+}
+else if (metrics != null)
+{
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Peso:</strong> @metrics.Weight kg</li>
+        <li class="list-group-item"><strong>Altura:</strong> @metrics.Height cm</li>
+        <li class="list-group-item"><strong>IMC:</strong> @metrics.BMI</li>
+        <li class="list-group-item"><strong>Fecha de Métrica:</strong> @metrics.Date.ToShortDateString()</li>
+        <li class="list-group-item"><strong>Última Actualización:</strong> @metrics.LastUpdated.ToShortDateString()</li>
+    </ul>
+}
+else
+{
+    <div class="alert alert-warning">
+        No se encontraron métricas. Por favor, contacta a tu entrenador.
+    </div>
+}
+
+@code {
+    private ProgressMetric? metrics; // Usar directamente el modelo existente
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out int userId))
+                {
+                    // Cargar la última métrica registrada desde la base de datos
+                    metrics = await DbContext.Metrics
+                        .Where(m => m.UserId == userId)
+                        .OrderByDescending(m => m.LastUpdated)
+                        .FirstOrDefaultAsync();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar las métricas: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

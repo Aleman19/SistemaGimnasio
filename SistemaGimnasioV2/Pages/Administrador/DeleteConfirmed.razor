@@ -1,0 +1,40 @@
+﻿@page "/Administrador/DeleteConfirmed/{UserId:int}"
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Eliminando Usuario...</h3>
+
+<div class="alert alert-info">Procesando la eliminación del usuario. Por favor, espere.</div>
+
+@code {
+    [Parameter]
+    public int UserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DeleteUserAsync();
+    }
+
+    private async Task DeleteUserAsync()
+    {
+        try
+        {
+            var userToDelete = await DbContext.Users.FindAsync(UserId);
+            if (userToDelete != null)
+            {
+                DbContext.Users.Remove(userToDelete);
+                await DbContext.SaveChangesAsync();
+            }
+
+            // Redirigir a la lista de usuarios
+            NavigationManager.NavigateTo("/Administrador/ManageUsers");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar el usuario: {ex.Message}");
+            NavigationManager.NavigateTo("/Administrador/ManageUsers");
+        }
+    }
+}

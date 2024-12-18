@@ -1,0 +1,22 @@
+﻿@typeparam TValue
+
+<input type="time" @bind="Value" class="@CssClass" />
+
+@code {
+    [Parameter]
+    public TValue Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue> ValueChanged { get; set; }
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    private async Task UpdateValue(ChangeEventArgs e)
+    {
+        if (e.Value is string stringValue && TimeSpan.TryParse(stringValue, out var timeValue))
+        {
+            await ValueChanged.InvokeAsync((TValue)(object)timeValue);
+        }
+    }
+}

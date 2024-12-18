@@ -1,0 +1,180 @@
+﻿@page "/Entrenador/ManageClasses"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+
+<h3>Gestión de Clases</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando información...</div>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (classSchedules != null && classSchedules.Any())
+{
+    <table class="table table-striped table-hover mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre de la Clase</th>
+                <th>Fecha</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in classSchedules)
+            {
+                <tr>
+                    <td>@schedule.Id</td>
+                    <td>@(schedule.Class?.Name ?? "Clase no asignada")</td>
+                    <td>@schedule.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@schedule.StartTime.ToString(@"hh\:mm\:ss")</td>
+                    <td>@schedule.EndTime.ToString(@"hh\:mm\:ss")</td>
+                    <td>
+                        <a href="/Entrenador/EditClass/@schedule.Id" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a href="/Entrenador/DeleteClass/@schedule.Id" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Borrar
+                        </a>
+                        <a href="/Entrenador/ManageClasses" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">No hay clases asignadas para este entrenador.</div>
+}
+
+<!-- Botones de Acción General -->
+<!-- Botones de Acción General -->
+<div class="mt-3">
+    <!-- Botón para Crear Nueva Clase -->
+    <a href="/Entrenador/AddClass" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Crear Nueva Clase
+    </a>
+
+    <!-- Botón para Editar Clase -->
+    <a href="/Entrenador/EditClass" class="btn btn-warning">
+        <i class="bi bi-pencil"></i> Editar Clase
+    </a>
+
+    <!-- Botón para Borrar Clase -->
+    <a href="/Entrenador/DeleteClass" class="btn btn-danger">
+        <i class="bi bi-trash"></i> Borrar Clase
+    </a>
+    <!-- Botón Cancelar (Inicio) -->
+    <a href="/Login" class="btn btn-secondary">
+        <i class="bi bi-plus-circle"></i> Cancelar
+    </a>
+    
+</div>
+
+
+<!-- Top 5 Clases Más Populares -->
+<div class="mt-5">
+    <h4>Top 5 Clases Más Populares</h4>
+    @if (topClasses.Any())
+    {
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Nombre de la Clase</th>
+                    <th>Cantidad de Estudiantes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var topClass in topClasses)
+                {
+                    <tr>
+                        <td>@topClass.Name</td>
+                        <td>@topClass.StudentCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No hay datos disponibles sobre clases populares.</div>
+    }
+</div>
+
+@code {
+    private List<ClassSchedule> classSchedules = new();
+    private List<TopClass> topClasses = new();
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var trainerId = await GetTrainerIdAsync();
+
+            if (trainerId != null)
+            {
+                // Cargar clases asignadas al entrenador
+                classSchedules = await DbContext.ClassSchedules
+                    .Include(c => c.Class)
+                    .Where(c => c.TrainerId == trainerId)
+                    .ToListAsync();
+            }
+
+            // Obtener las clases más populares
+            topClasses = await DbContext.Classes
+                .Where(c => c.IsActive)
+                .OrderByDescending(c => c.DurationMinutes)
+                .Take(5)
+                .Select(c => new TopClass
+                    {
+                        Name = c.Name,
+                        StudentCount = c.DurationMinutes
+                    })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar los datos: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task<int?> GetTrainerIdAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var trainerIdClaim = user?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (trainerIdClaim != null && int.TryParse(trainerIdClaim.Value, out int trainerId))
+        {
+            return trainerId;
+        }
+
+        return null;
+    }
+
+    private class TopClass
+    {
+        public string Name { get; set; } = string.Empty;
+        public int StudentCount { get; set; }
+    }
+}

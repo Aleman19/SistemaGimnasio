@@ -1,0 +1,123 @@
+﻿@page "/Administrador/AddUser"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+
+<h3>Agregar Nuevo Usuario</h3>
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <!-- Formulario Blazor con validaciones -->
+        <EditForm Model="@newUser" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Campo: Primer Nombre -->
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Primer Nombre:</label>
+                <InputText id="firstName" @bind-Value="newUser.FirstName" class="form-control" />
+            </div>
+
+            <!-- Campo: Apellido -->
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Apellido:</label>
+                <InputText id="lastName" @bind-Value="newUser.LastName" class="form-control" />
+            </div>
+
+            <!-- Campo: Nombre de Usuario -->
+            <div class="mb-3">
+                <label for="username" class="form-label">Nombre de Usuario:</label>
+                <InputText id="username" @bind-Value="newUser.Username" class="form-control" />
+            </div>
+
+            <!-- Campo: Correo Electrónico -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico:</label>
+                <InputText id="email" @bind-Value="newUser.Email" type="email" class="form-control" />
+            </div>
+
+            <!-- Campo: Contraseña -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña:</label>
+                <InputText id="password" @bind-Value="newUser.Password" type="password" class="form-control" />
+            </div>
+
+            <!-- Campo: Rol del Usuario -->
+            <div class="mb-3">
+                <label for="role" class="form-label">Rol del Usuario:</label>
+                <InputSelect id="role" @bind-Value="newUser.Role" class="form-control">
+                    <option value="">Seleccione un Rol</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Entrenador">Entrenador</option>
+                    <option value="Cliente">Cliente</option>
+                </InputSelect>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-success">Guardar Usuario</button>
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancelar</button>
+            </div>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    // Modelo para el formulario
+    private User newUser = new User();
+    private string errorMessage = string.Empty;
+
+    // Método ejecutado al enviar el formulario
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Validar si el usuario ya existe en la base de datos
+            var existingUser = await DbContext.Users
+                .FirstOrDefaultAsync(u => u.Username == newUser.Username || u.Email == newUser.Email);
+
+            if (existingUser != null)
+            {
+                errorMessage = "El nombre de usuario o correo electrónico ya existe.";
+                return;
+            }
+
+            // Crear el usuario (sin encriptar la contraseña)
+            var userToAdd = new User
+                {
+                    FirstName = newUser.FirstName,
+                    LastName = newUser.LastName,
+                    Username = newUser.Username,
+                    Email = newUser.Email,
+                    Password = newUser.Password, // Guardar la contraseña directamente
+                    Role = newUser.Role
+                };
+
+            DbContext.Users.Add(userToAdd);
+            await DbContext.SaveChangesAsync();
+
+            // Redirigir a la lista de usuarios
+            NavigationManager.NavigateTo("/Administrador/ManageUsers");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el usuario: {ex.Message}");
+            errorMessage = "Ocurrió un error al guardar el usuario. Intente nuevamente.";
+        }
+    }
+
+    // Método para cancelar la operación y regresar
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Administrador/ManageUsers");
+    }
+}

@@ -1,0 +1,181 @@
+﻿@page "/Administrador/EditSchedule/{scheduleId:int}"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Editar Horario</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando horario...</div>
+}
+else if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else
+{
+    <EditForm Model="@classSchedule" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <!-- Fecha de la Clase -->
+        <div class="mb-3">
+            <label for="date" class="form-label">Fecha de la Clase:</label>
+            <InputDate id="date" @bind-Value="classSchedule.Date" class="form-control" />
+        </div>
+
+        <!-- Hora de Inicio -->
+        <div class="mb-3">
+            <label for="startTime" class="form-label">Hora de Inicio:</label>
+            <input type="time" id="startTime" class="form-control"
+                   @bind="formattedStartTime"
+                   @onchange="HandleStartTimeChange" />
+        </div>
+
+        <!-- Hora de Finalización -->
+        <div class="mb-3">
+            <label for="endTime" class="form-label">Hora de Finalización:</label>
+            <input type="time" id="endTime" class="form-control"
+                   @bind="formattedEndTime"
+                   @onchange="HandleEndTimeChange" />
+        </div>
+
+        <!-- Selección de la Clase -->
+        <div class="mb-3">
+            <label for="classId" class="form-label">Clase:</label>
+            <InputSelect id="classId" @bind-Value="classSchedule.ClassId" class="form-control">
+                <option value="">Seleccione una clase</option>
+                @foreach (var classOption in availableClasses)
+                {
+                    <option value="@classOption.Id">@classOption.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <!-- Selección del Entrenador -->
+        <div class="mb-3">
+            <label for="trainerId" class="form-label">Entrenador:</label>
+            <InputSelect id="trainerId" @bind-Value="classSchedule.TrainerId" class="form-control">
+                <option value="">Seleccione un entrenador</option>
+                @foreach (var trainerOption in availableTrainers)
+                {
+                    <option value="@trainerOption.Id">@trainerOption.FullName</option>
+                }
+            </InputSelect>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+            <a href="/Administrador/ManageSchedules" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int scheduleId { get; set; }
+
+    private ClassSchedule classSchedule = new();
+    private List<Class> availableClasses = new();
+    private List<User> availableTrainers = new();
+
+    private string? errorMessage = null;
+    private bool isLoading = true;
+
+    // Variables formateadas para Input Time
+    private string formattedStartTime = string.Empty;
+    private string formattedEndTime = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Cargar clases y entrenadores disponibles
+            availableClasses = await DbContext.Classes.ToListAsync();
+            availableTrainers = await DbContext.Users
+                .Where(u => u.Role == "Entrenador")
+                .ToListAsync();
+
+            // Cargar el horario existente
+            var existingSchedule = await DbContext.ClassSchedules
+                .FirstOrDefaultAsync(cs => cs.Id == scheduleId);
+
+            if (existingSchedule != null)
+            {
+                classSchedule = existingSchedule;
+
+                // Formatear horas iniciales para el campo <input type="time">
+                formattedStartTime = classSchedule.StartTime.ToString(@"hh\:mm");
+                formattedEndTime = classSchedule.EndTime.ToString(@"hh\:mm");
+            }
+            else
+            {
+                errorMessage = "El horario no existe.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Ocurrió un error al cargar los datos.";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void HandleStartTimeChange(ChangeEventArgs e)
+    {
+        if (TimeSpan.TryParse(e.Value?.ToString(), out var time))
+        {
+            classSchedule.StartTime = time;
+        }
+    }
+
+    private void HandleEndTimeChange(ChangeEventArgs e)
+    {
+        if (TimeSpan.TryParse(e.Value?.ToString(), out var time))
+        {
+            classSchedule.EndTime = time;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var existingSchedule = await DbContext.ClassSchedules
+                .FirstOrDefaultAsync(cs => cs.Id == classSchedule.Id);
+
+            if (existingSchedule != null)
+            {
+                existingSchedule.Date = classSchedule.Date;
+                existingSchedule.StartTime = classSchedule.StartTime;
+                existingSchedule.EndTime = classSchedule.EndTime;
+                existingSchedule.ClassId = classSchedule.ClassId;
+                existingSchedule.TrainerId = classSchedule.TrainerId;
+
+                await DbContext.SaveChangesAsync();
+                NavigationManager.NavigateTo("/Administrador/ManageSchedules");
+            }
+            else
+            {
+                errorMessage = "No se pudo encontrar el horario.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Ocurrió un error al guardar los cambios.";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

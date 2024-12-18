@@ -1,0 +1,137 @@
+﻿@page "/Cliente/DashboardClient"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject HttpClient Http
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title">Panel de Control del Cliente</h3>
+        <p>@message</p>
+
+        <!-- Estado de la Membresía -->
+        @if (!string.IsNullOrEmpty(membershipMessage))
+        {
+            <div class="alert @(isMembershipExpired ? "alert-danger" : "alert-success")">
+                <h5>Estado de la Membresía:</h5>
+                <p>@membershipMessage</p>
+
+                @if (isMembershipExpired)
+                {
+                    <!-- Botón Renovar Membresía cambiado a href -->
+                    <a href="/Cliente/RenewClientMembership" class="btn btn-warning w-100 text-center">
+                        <i class="bi bi-credit-card"></i> Renovar Membresía
+                    </a>
+                }
+            </div>
+        }
+
+        <!-- Opciones del cliente -->
+        <div class="row mt-4 text-center">
+            <!-- Reservar Clases -->
+            <div class="col-md-3 mb-2">
+                <a href="/Cliente/ReserveClass" class="btn btn-primary w-100">
+                    <i class="bi bi-calendar-plus"></i> Reservar Clases
+                </a>
+            </div>
+            <!-- Métricas Actuales -->
+            <div class="col-md-3 mb-2">
+                <a href="/Cliente/Metrics" class="btn btn-success w-100">
+                    <i class="bi bi-graph-up"></i> Ver Métricas
+                </a>
+            </div>
+            <!-- Historial de Métricas -->
+            <div class="col-md-3 mb-2">
+                <a href="/Cliente/MetricsHistory" class="btn btn-info w-100">
+                    <i class="bi bi-clock-history"></i> Historial de Métricas
+                </a>
+            </div>
+            <!-- Salir -->
+            <div class="col-md-3 mb-2">
+                <a href="/Login" class="btn btn-secondary w-100">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string message = string.Empty;
+    private string membershipMessage = string.Empty;
+    private bool isMembershipExpired = false;
+    private int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            if (user.IsInRole("Cliente"))
+            {
+                userId = int.Parse(user.FindFirst("sub")?.Value ?? "0"); // Obtener ID del usuario
+                message = $"Bienvenido, {user.Identity.Name}";
+                await CheckMembershipStatus();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/Login/AccessDenied");
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/Login");
+        }
+    }
+
+    private async Task CheckMembershipStatus()
+    {
+        try
+        {
+            var response = await Http.GetAsync($"api/Client/MembershipStatus/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var membership = await response.Content.ReadFromJsonAsync<MembershipInfo>();
+                if (membership != null)
+                {
+                    var daysRemaining = (membership.EndDate - DateTime.Now).Days;
+
+                    if (daysRemaining > 0)
+                    {
+                        membershipMessage = $"Tu membresía '{membership.PlanName}' vence en {daysRemaining} días (Vence el {membership.EndDate:dd/MM/yyyy}).";
+                        isMembershipExpired = false;
+                    }
+                    else
+                    {
+                        membershipMessage = $"Tu membresía '{membership.PlanName}' está vencida desde el {membership.EndDate:dd/MM/yyyy}.";
+                        isMembershipExpired = true;
+                    }
+                }
+                else
+                {
+                    membershipMessage = "No tienes una membresía activa.";
+                    isMembershipExpired = true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al verificar la membresía: {ex.Message}");
+            membershipMessage = "No se pudo verificar el estado de tu membresía.";
+            isMembershipExpired = true;
+        }
+    }
+
+    private class MembershipInfo
+    {
+        public string PlanName { get; set; } = string.Empty;
+        public DateTime EndDate { get; set; }
+    }
+}

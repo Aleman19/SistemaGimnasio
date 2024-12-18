@@ -1,0 +1,74 @@
+﻿@page "/Entrenador/DashboardTrainer"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+
+
+<h3>Panel de Control del Entrenador</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando...</div>
+}
+else
+{
+    <div class="container mt-4">
+        <div class="alert alert-success">
+            <h4>@message</h4>
+        </div>
+
+        <!-- Menú de Navegación -->
+        <div class="nav nav-tabs mb-3">
+            <a class="nav-link @(IsActive("/Entrenador/ClientList"))" href="/Entrenador/ClientList">
+                <i class="bi bi-people"></i> Lista de Clientes
+            </a>
+            <a class="nav-link @(IsActive("/Entrenador/GenerateInvoices"))" href="/Entrenador/GenerateInvoices">
+                <i class="bi bi-file-earmark"></i> Generar Facturas
+            </a>
+            <a class="nav-link @(IsActive("/Entrenador/ManageClasses"))" href="/Entrenador/ManageClasses">
+                <i class="bi bi-calendar"></i> Administrar Clases
+            </a>
+        </div>
+
+        <!-- Bienvenida o Contenido Principal -->
+        <div>
+            <p>Utilice el menú superior para gestionar las opciones disponibles en su panel de control.</p>
+        </div>
+    </div>
+}
+
+@code {
+    private string message = string.Empty;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            if (user.IsInRole("Entrenador"))
+            {
+                message = $"Bienvenido, {user.Identity.Name}";
+            }
+            else
+            {
+                // Redirigir a acceso denegado
+                NavigationManager.NavigateTo("/Login/AccessDenied");
+            }
+        }
+        else
+        {
+            // Redirigir al login
+            NavigationManager.NavigateTo("/Login");
+        }
+
+        isLoading = false;
+    }
+
+    // Método auxiliar para manejar el enlace activo
+    private string IsActive(string href) =>
+        NavigationManager.Uri.EndsWith(href, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}

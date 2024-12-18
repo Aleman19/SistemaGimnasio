@@ -1,0 +1,19 @@
+﻿@page "/Administrador/Reports"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+
+<h3>Reportes</h3>
+
+<!-- Botones como enlaces para navegar a los reportes -->
+<div class="mb-3">
+    <p>Seleccione el tipo de reporte:</p>
+    <a href="/Administrador/ReportDetails/Ingresos" class="btn btn-primary me-2">
+        <i class="bi bi-cash-stack"></i> Reporte de Ingresos Mensuales
+    </a>
+    <a href="/Administrador/ReportDetails/Actividad" class="btn btn-success">
+        <i class="bi bi-person-check"></i> Reporte de Actividad de Usuarios
+    </a>
+</div>

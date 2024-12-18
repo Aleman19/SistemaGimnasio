@@ -1,0 +1,105 @@
+﻿@page "/Administrador/DeleteSchedule/{ScheduleId:int}"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Eliminar Horario</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando información del horario...</div>
+}
+else if (scheduleToDelete != null && !isDeleted)
+{
+    <div class="alert alert-warning mt-3">
+        <p><strong>¿Está seguro de que desea eliminar el siguiente horario?</strong></p>
+        <ul>
+            <li><strong>Clase:</strong> @scheduleToDelete.Class?.Name</li>
+            <li><strong>Entrenador:</strong> @scheduleToDelete.Trainer?.FullName</li>
+            <li><strong>Fecha:</strong> @scheduleToDelete.Date.ToString("dd/MM/yyyy")</li>
+            <li><strong>Hora de Inicio:</strong> @scheduleToDelete.StartTime.ToString(@"hh\:mm")</li>
+            <li><strong>Hora de Finalización:</strong> @scheduleToDelete.EndTime.ToString(@"hh\:mm")</li>
+        </ul>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="mt-4">
+        <button class="btn btn-danger" @onclick="ConfirmDelete">
+            <i class="bi bi-trash"></i> Eliminar
+        </button>
+
+        <a href="/Administrador/ManageSchedules" class="btn btn-secondary ms-2">
+            <i class="bi bi-arrow-left"></i> Cancelar
+        </a>
+    </div>
+}
+else if (isDeleted)
+{
+    <div class="alert alert-success mt-3">
+        <p>¡Horario eliminado exitosamente!</p>
+        <a href="/Administrador/ManageSchedules" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Volver a Horarios
+        </a>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No se encontró el horario especificado o ocurrió un error.</div>
+}
+
+@code {
+    [Parameter]
+    public int ScheduleId { get; set; } // Parámetro recibido de la URL
+
+    private ClassSchedule? scheduleToDelete; // Modelo del horario a eliminar
+    private bool isLoading = true; // Indicador de carga
+    private bool isDeleted = false; // Estado de eliminación exitosa
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            // Buscar el horario específico por su ID
+            scheduleToDelete = await DbContext.ClassSchedules
+                .Include(cs => cs.Class)
+                .Include(cs => cs.Trainer)
+                .FirstOrDefaultAsync(cs => cs.Id == ScheduleId);
+
+            if (scheduleToDelete == null)
+            {
+                Console.WriteLine($"Horario con ID {ScheduleId} no encontrado.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar el horario: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (scheduleToDelete != null)
+        {
+            try
+            {
+                // Eliminar el horario de la base de datos
+                DbContext.ClassSchedules.Remove(scheduleToDelete);
+                await DbContext.SaveChangesAsync();
+
+                isDeleted = true; // Marcar como eliminado
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar el horario: {ex.Message}");
+            }
+        }
+    }
+}

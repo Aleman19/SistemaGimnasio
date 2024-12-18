@@ -1,0 +1,168 @@
+﻿@page "/Administrador/EditUser/{UserId:int}"
+@using Microsoft.AspNetCore.Components.Forms
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Editar Usuario</h3>
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        @if (isLoading)
+        {
+            <div class="alert alert-info">Cargando datos del usuario...</div>
+        }
+        else if (errorMessage != null)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+        else
+        {
+            <EditForm Model="@editUser" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <!-- Campo: Primer Nombre -->
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">Primer Nombre:</label>
+                    <InputText id="firstName" @bind-Value="editUser.FirstName" class="form-control" />
+                </div>
+
+                <!-- Campo: Apellido -->
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Apellido:</label>
+                    <InputText id="lastName" @bind-Value="editUser.LastName" class="form-control" />
+                </div>
+
+                <!-- Campo: Nombre de Usuario -->
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nombre de Usuario:</label>
+                    <InputText id="username" @bind-Value="editUser.Username" class="form-control" />
+                </div>
+
+                <!-- Campo: Correo Electrónico -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico:</label>
+                    <InputText id="email" @bind-Value="editUser.Email" type="email" class="form-control" />
+                </div>
+
+                <!-- Campo: Contraseña -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Nueva Contraseña (opcional):</label>
+                    <InputText id="password" @bind-Value="editUser.Password" type="password" class="form-control" />
+                    <small class="text-muted">Deje en blanco si no desea cambiar la contraseña.</small>
+                </div>
+
+                <!-- Campo: Rol del Usuario -->
+                <div class="mb-3">
+                    <label for="role" class="form-label">Rol del Usuario:</label>
+                    <InputSelect id="role" @bind-Value="editUser.Role" class="form-control">
+                        <option value="">Seleccione un Rol</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Entrenador">Entrenador</option>
+                        <option value="Cliente">Cliente</option>
+                    </InputSelect>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancelar</button>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int UserId { get; set; }
+
+    private User editUser = new User();
+    private string errorMessage = null;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserAsync();
+    }
+
+    // Cargar el usuario desde la base de datos
+    private async Task LoadUserAsync()
+    {
+        try
+        {
+            var user = await DbContext.Users.FindAsync(UserId);
+            if (user == null)
+            {
+                errorMessage = "El usuario no fue encontrado.";
+                return;
+            }
+
+            // Mapear los datos del usuario a 'editUser'
+            editUser = new User
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar el usuario: {ex.Message}");
+            errorMessage = "Error al cargar los datos del usuario. Intente nuevamente.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Guardar los cambios en la base de datos
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var existingUser = await DbContext.Users.FindAsync(UserId);
+            if (existingUser != null)
+            {
+                // Actualizar los campos del usuario
+                existingUser.FirstName = editUser.FirstName;
+                existingUser.LastName = editUser.LastName;
+                existingUser.Username = editUser.Username;
+                existingUser.Email = editUser.Email;
+                existingUser.Role = editUser.Role;
+
+                // Actualizar contraseña solo si se proporciona una nueva
+                if (!string.IsNullOrWhiteSpace(editUser.Password))
+                {
+                    existingUser.Password = editUser.Password;
+                }
+
+                await DbContext.SaveChangesAsync();
+
+                // Redirigir a la lista de usuarios
+                NavigationManager.NavigateTo("/Administrador/ManageUsers");
+            }
+            else
+            {
+                errorMessage = "El usuario no fue encontrado.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar el usuario: {ex.Message}");
+            errorMessage = "Error al guardar los cambios. Intente nuevamente.";
+        }
+    }
+
+    // Cancelar y redirigir a la lista de usuarios
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/Administrador/ManageUsers");
+    }
+}

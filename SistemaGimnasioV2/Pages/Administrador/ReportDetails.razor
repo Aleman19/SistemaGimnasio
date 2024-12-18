@@ -1,0 +1,163 @@
+﻿@page "/Administrador/ReportDetails/{ReportType}"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Detalles del Reporte: @reportTitle</h3>
+
+<!-- Indicador de carga -->
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando detalles del reporte...</div>
+}
+
+<!-- Mostrar resultados -->
+@if (reportData.Any())
+{
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                @foreach (var column in reportHeaders)
+                {
+                    <th>@column</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in reportData)
+            {
+                <tr>
+                    @foreach (var value in row)
+                    {
+                        <td>@value</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!isLoading)
+{
+    <div class="alert alert-warning mt-3">No hay datos disponibles para este reporte.</div>
+}
+
+<!-- Botón Regresar -->
+<a href="/Administrador/Reports" class="btn btn-secondary mt-3">
+    <i class="bi bi-arrow-left"></i> Regresar a Reportes
+</a>
+
+@code {
+    [Parameter]
+    public string ReportType { get; set; } = string.Empty; // Tipo de reporte recibido como parámetro
+
+    private string reportTitle = string.Empty; // Título del reporte
+    private List<string> reportHeaders = new(); // Encabezados de la tabla
+    private List<List<string>> reportData = new(); // Datos del reporte
+    private bool isLoading = true; // Indicador de carga
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        try
+        {
+            // Determinar el reporte a mostrar
+            switch (ReportType)
+            {
+                case "Ingresos":
+                    reportTitle = "Reporte de Ingresos Mensuales";
+                    await LoadIngresosReport();
+                    break;
+
+                case "Actividad":
+                    reportTitle = "Reporte de Actividad de Usuarios";
+                    await LoadActividadReport();
+                    break;
+
+                default:
+                    reportTitle = "Reporte Desconocido";
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los detalles del reporte: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Método para cargar el reporte de Ingresos Mensuales
+    private async Task LoadIngresosReport()
+    {
+        reportHeaders = new List<string> { "Mes", "Total Ingresos" };
+
+        var ingresos = await DbContext.Invoices
+            .GroupBy(i => i.Date.Month)
+            .Select(g => new
+            {
+                Mes = g.Key,
+                Total = g.Sum(i => i.Amount)
+            })
+            .ToListAsync();
+
+        if (ingresos.Any())
+        {
+            foreach (var ingreso in ingresos)
+            {
+                string nombreMes = ObtenerNombreMes(ingreso.Mes);
+                reportData.Add(new List<string> { nombreMes, $"${ingreso.Total:F2}" });
+            }
+        }
+    }
+
+    // Método para cargar el reporte de Actividad de Usuarios
+    private async Task LoadActividadReport()
+    {
+        reportHeaders = new List<string> { "Usuario", "Clases Reservadas" };
+
+        var actividad = await DbContext.Reservations
+            .GroupBy(r => r.UserId)
+            .Select(g => new
+            {
+                UserId = g.Key,
+                TotalClases = g.Count()
+            })
+            .ToListAsync();
+
+        if (actividad.Any())
+        {
+            foreach (var item in actividad)
+            {
+                var user = await DbContext.Users.FindAsync(item.UserId);
+                string nombreUsuario = user != null ? user.Username : "Usuario desconocido";
+                reportData.Add(new List<string> { nombreUsuario, item.TotalClases.ToString() });
+            }
+        }
+    }
+
+    // Método auxiliar para obtener el nombre del mes
+    private string ObtenerNombreMes(int mes)
+    {
+        return mes switch
+        {
+            1 => "Enero",
+            2 => "Febrero",
+            3 => "Marzo",
+            4 => "Abril",
+            5 => "Mayo",
+            6 => "Junio",
+            7 => "Julio",
+            8 => "Agosto",
+            9 => "Septiembre",
+            10 => "Octubre",
+            11 => "Noviembre",
+            12 => "Diciembre",
+            _ => "Desconocido"
+        };
+    }
+}

@@ -1,0 +1,23 @@
+﻿@page "/TestSignalR"
+@inject NavigationManager NavigationManager
+
+<h3>Prueba de SignalR y Blazor Server</h3>
+
+<div>
+    <!-- Botón de prueba que incrementa un contador -->
+    <button class="btn btn-primary" @onclick="IncrementCounter">Contador: @counter</button>
+</div>
+
+<div>
+    <p>Presiona el botón y observa si el contador aumenta.</p>
+</div>
+
+@code {
+    private int counter = 0;
+
+    private void IncrementCounter()
+    {
+        counter++;
+        Console.WriteLine($"Contador: {counter}");
+    }
+}

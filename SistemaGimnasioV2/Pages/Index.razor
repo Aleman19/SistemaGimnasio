@@ -1,0 +1,66 @@
+﻿@page "/"
+@inject IHttpClientFactory HttpClientFactory
+
+@code {
+    // Mensaje para el estado de la conexión con la base de datos
+    private string dbMessage = "Verificando conexión...";
+
+    // Método que se ejecuta al inicializar la página
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Crear cliente HTTP usando la configuración de "ApiClient"
+            var httpClient = HttpClientFactory.CreateClient("ApiClient");
+
+            // Llamar al endpoint para verificar la conexión
+            var response = await httpClient.GetAsync("api/Test/TestConnection");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Procesar el mensaje recibido de la API
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse>();
+
+                if (result != null && result.Success)
+                {
+                    dbMessage = result.Message; // Mostrar mensaje de éxito
+                }
+                else
+                {
+                    dbMessage = "Error: Respuesta inesperada del servidor.";
+                }
+            }
+            else
+            {
+                dbMessage = "Error: No se pudo obtener una respuesta exitosa del servidor.";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Capturar y mostrar cualquier error que ocurra
+            dbMessage = $"Error al conectar con la base de datos: {ex.Message}";
+            Console.WriteLine($"Excepción durante la conexión: {ex}"); // Registro en consola
+        }
+    }
+
+    // Clase para manejar la respuesta de la API
+    private class ApiResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+    }
+}
+
+<!-- Contenido HTML -->
+<div class="text-center">
+    <h1 class="display-4">Bienvenido al Sistema de Gimnasio</h1>
+    <p>Esta es la página principal construida con Blazor y ASP.NET Core.</p>
+
+    <!-- Mostrar mensaje del estado de la conexión -->
+    <div class="alert @((dbMessage?.Contains("Error") ?? false) ? "alert-danger" : "alert-success")" role="alert">
+        @dbMessage
+    </div>
+
+    <!-- Botón para navegar al inicio de sesión -->
+    <a href="/login" class="btn btn-primary mt-3">Ir a Inicio de Sesión</a>
+</div>

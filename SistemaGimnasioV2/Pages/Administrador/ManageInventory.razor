@@ -1,0 +1,62 @@
+﻿@page "/Administrador/ManageInventory"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@inject GymDbContext DbContext
+
+<h3>Gestión de Inventario</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (inventoryItems != null && inventoryItems.Any())
+        {
+            @foreach (var item in inventoryItems)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>
+                        <!-- Enlace para Editar Ítem -->
+                        <a href="/Administrador/EditInventoryItem/@item.Id" class="btn btn-warning btn-sm">
+                            Editar
+                        </a>
+                        <!-- Enlace para Eliminar Ítem -->
+                        <a href="/Administrador/DeleteInventoryItem/@item.Id" class="btn btn-danger btn-sm">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No hay ítems en el inventario.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Enlace para Agregar Ítem -->
+<a href="/Administrador/AddInventoryItem" class="btn btn-primary">
+    Agregar Ítem
+</a>
+
+@code {
+    private List<InventoryItem> inventoryItems = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar los ítems del inventario desde la base de datos
+        inventoryItems = await DbContext.InventoryItems.ToListAsync();
+    }
+}

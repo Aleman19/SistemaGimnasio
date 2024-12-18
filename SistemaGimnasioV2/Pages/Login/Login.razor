@@ -1,0 +1,110 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using SistemaGimnasioV2.Models
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject AuthService AuthService
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4>Iniciar Sesión</h4>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@loginRequest" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuario:</label>
+                            <InputText id="username" @bind-Value="loginRequest.Username" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña:</label>
+                            <InputText id="password" @bind-Value="loginRequest.Password" type="password" class="form-control" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" disabled="@isLoggingIn">
+                            @(isLoggingIn ? "Cargando..." : "Ingresar")
+                        </button>
+                    </EditForm>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">@errorMessage</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginRequest loginRequest = new LoginRequest();
+    private string errorMessage = string.Empty;
+    private bool isLoggingIn = false;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = string.Empty;
+        isLoggingIn = true;
+
+        try
+        {
+            // Obtener el cliente HTTP configurado con BaseAddress
+            var Http = HttpClientFactory.CreateClient("ApiClient");
+
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var userResponse = await response.Content.ReadFromJsonAsync<UserResponse>();
+
+                if (userResponse?.User != null)
+                {
+                    var user = userResponse.User;
+
+                    // Configurar el estado de autenticación
+                    if (AuthStateProvider is CustomAuthStateProvider customAuthProvider)
+                    {
+                        await customAuthProvider.SetUserAsync(user.Username, user.Role);
+
+                    }
+
+                    // Redireccionar según el rol
+                    NavigationManager.NavigateTo(user.Role switch
+                    {
+                        "Administrador" => "/Administrador/DashboardAdmin",
+                        "Entrenador" => "/Entrenador/DashboardTrainer",
+                        "Cliente" => "/Cliente/DashboardClient",
+                        _ => "/Login/AccessDenied"
+                    });
+                }
+                else
+                {
+                    errorMessage = "Respuesta inválida del servidor.";
+                }
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                errorMessage = !string.IsNullOrEmpty(errorResponse)
+                    ? errorResponse
+                    : "Credenciales inválidas. Inténtalo nuevamente.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al iniciar sesión: {ex.Message}");
+            errorMessage = "Error inesperado. Intente nuevamente.";
+        }
+        finally
+        {
+            isLoggingIn = false;
+        }
+    }
+}

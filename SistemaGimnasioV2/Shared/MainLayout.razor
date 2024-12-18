@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<div class="layout">
+    <header>
+        <nav>
+            <a href="/" @onclick="GoHome">Inicio</a>
+            <a href="/Login" @onclick="GoToLogin">Iniciar Sesión</a>
+        </nav>
+    </header>
+    <main>
+        @Body
+    </main>
+</div>
+
+@code {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/Login");
+    }
+}

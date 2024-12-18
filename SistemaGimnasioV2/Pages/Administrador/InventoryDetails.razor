@@ -1,0 +1,88 @@
+﻿@page "/Administrador/InventoryDetails/{ItemId:int}"
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Detalles del Ítem de Inventario</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando...</div>
+}
+else if (inventoryItem != null)
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <!-- Detalles del ítem -->
+            <dl class="row">
+                <dt class="col-sm-4">Nombre del Ítem:</dt>
+                <dd class="col-sm-8">@inventoryItem.Name</dd>
+
+                <dt class="col-sm-4">Cantidad:</dt>
+                <dd class="col-sm-8">@inventoryItem.Quantity</dd>
+
+                <dt class="col-sm-4">Precio:</dt>
+                <dd class="col-sm-8">@($"{inventoryItem.Price:C}")</dd>
+
+                <!-- Campo: Fecha de Compra -->
+                <dt class="col-sm-4">Fecha de Compra:</dt>
+                <dd class="col-sm-8">@inventoryItem.PurchaseDate.ToShortDateString()</dd>
+
+                <!-- Campo: Vida Útil en Meses -->
+                <dt class="col-sm-4">Vida Útil (en meses):</dt>
+                <dd class="col-sm-8">@inventoryItem.LifeSpanMonths</dd>
+
+                <!-- Fecha Estimada de Vencimiento -->
+                <dt class="col-sm-4">Fecha Estimada de Vencimiento:</dt>
+                <dd class="col-sm-8">
+                    @(inventoryItem.PurchaseDate.AddMonths(inventoryItem.LifeSpanMonths).ToShortDateString())
+                </dd>
+            </dl>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
+                <a href="/Administrador/ManageInventory" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Regresar
+                </a>
+                <a href="/Administrador/EditInventoryItem/@inventoryItem.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">El ítem de inventario no fue encontrado.</div>
+}
+
+@code {
+    [Parameter]
+    public int ItemId { get; set; } // Parámetro de la URL para identificar el ítem
+
+    private InventoryItem? inventoryItem = null; // Modelo del ítem
+    private bool isLoading = true; // Indicador de carga
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Cargar el ítem de la base de datos
+            inventoryItem = await DbContext.InventoryItems.FindAsync(ItemId);
+
+            if (inventoryItem == null)
+            {
+                Console.WriteLine($"Ítem con ID {ItemId} no encontrado.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los detalles del ítem: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false; // Finaliza la carga
+        }
+    }
+}

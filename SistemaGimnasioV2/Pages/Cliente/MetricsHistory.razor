@@ -1,0 +1,64 @@
+﻿@page "/Cliente/MetricsHistory"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@using System.Security.Claims
+@inject GymDbContext DbContext
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Historial de Métricas</h3>
+
+@if (metricsHistory != null && metricsHistory.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Peso (kg)</th>
+                <th>Altura (cm)</th>
+                <th>IMC</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var metric in metricsHistory)
+            {
+                <tr>
+                    <td>@metric.Date.ToShortDateString()</td>
+                    <td>@metric.Weight</td>
+                    <td>@metric.Height</td>
+                    <td>@metric.BMI</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">No se encontraron métricas en el historial.</div>
+}
+
+@code {
+    private List<ProgressMetric> metricsHistory = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Obtener el usuario autenticado
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            // Extraer el UserId desde los claims
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+            {
+                // Cargar historial de métricas desde la base de datos
+                metricsHistory = await DbContext.Metrics
+                    .Where(m => m.UserId == userId)
+                    .OrderByDescending(m => m.Date)
+                    .ToListAsync();
+            }
+        }
+    }
+}

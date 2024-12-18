@@ -1,0 +1,138 @@
+﻿@page "/Entrenador/EditClass/{ClassId:int}"
+@using Microsoft.AspNetCore.Components.Forms
+@using SistemaGimnasioV2.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Editar Clase</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando la información de la clase...</div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else
+{
+    <EditForm Model="classToEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="card shadow-sm p-4">
+            <!-- Campo: Nombre de la Clase -->
+            <div class="form-group mb-3">
+                <label for="name">Nombre de la Clase</label>
+                <InputText id="name" class="form-control" @bind-Value="classToEdit.Name" />
+            </div>
+
+            <!-- Campo: Descripción -->
+            <div class="form-group mb-3">
+                <label for="description">Descripción</label>
+                <InputTextArea id="description" class="form-control" @bind-Value="classToEdit.Description" />
+            </div>
+
+            <!-- Campo: Fecha de Inicio -->
+            <div class="form-group mb-3">
+                <label for="startDate">Fecha de Inicio</label>
+                <InputDate id="startDate" class="form-control" @bind-Value="classToEdit.StartDate" />
+            </div>
+
+            <!-- Campo: Duración -->
+            <div class="form-group mb-3">
+                <label for="duration">Duración (en minutos)</label>
+                <InputNumber id="duration" class="form-control" @bind-Value="classToEdit.DurationMinutes" />
+            </div>
+
+            <!-- Campo: Activa -->
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <InputCheckbox id="isActive" class="form-check-input" @bind-Value="classToEdit.IsActive" />
+                    <label class="form-check-label" for="isActive">¿Está Activa?</label>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-save"></i> Guardar Cambios
+                </button>
+                <a href="/Entrenador/ManageClasses" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+    private Class classToEdit = new();
+    private bool isLoading = true;
+    private string errorMessage = string.Empty;
+
+    [Parameter] public int ClassId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Obtener los datos de la clase por su ID
+            var result = await Http.GetFromJsonAsync<Class>($"api/Class/{ClassId}");
+            if (result != null)
+            {
+                classToEdit = result;
+            }
+            else
+            {
+                errorMessage = "No se encontró la clase especificada.";
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Error al conectar con el servidor: {httpEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error inesperado: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/Class/Update/{ClassId}", classToEdit);
+            if (response.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("/Entrenador/ManageClasses");
+            }
+            else
+            {
+                errorMessage = "No se pudo actualizar la clase. Por favor, verifica los datos e intenta nuevamente.";
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Error en la solicitud: {httpEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error inesperado: {ex.Message}";
+        }
+    }
+
+    private class Class
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public int DurationMinutes { get; set; }
+        public bool IsActive { get; set; } = true;
+    }
+}

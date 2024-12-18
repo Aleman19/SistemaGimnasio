@@ -1,0 +1,135 @@
+﻿@page "/Administrador/AddSchedule"
+@using Microsoft.AspNetCore.Components.Forms
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@using Microsoft.EntityFrameworkCore
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3>Agregar Nuevo Horario</h3>
+
+<div class="card mt-4 shadow-sm">
+    <div class="card-body">
+        <!-- Formulario para agregar un nuevo horario -->
+        <EditForm Model="@newSchedule" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Campo: Fecha -->
+            <div class="mb-3">
+                <label for="date" class="form-label">Fecha:</label>
+                <InputDate id="date" @bind="newSchedule.Date" class="form-control" TValue="DateTime" />
+            </div>
+
+            <!-- Campo: Hora de Inicio -->
+            <div class="mb-3">
+                <label for="startTime" class="form-label">Hora de Inicio:</label>
+                <InputTime id="startTime" @bind="newSchedule.StartTime" class="form-control" TValue="TimeSpan" />
+            </div>
+
+            <!-- Campo: Hora de Finalización -->
+            <div class="mb-3">
+                <label for="endTime" class="form-label">Hora de Finalización:</label>
+                <InputTime id="endTime" @bind="newSchedule.EndTime" class="form-control" TValue="TimeSpan" />
+            </div>
+
+            <!-- Campo: Clase Asociada -->
+            <div class="mb-3">
+                <label for="class" class="form-label">Clase:</label>
+                <InputSelect id="class" @bind="newSchedule.ClassId" class="form-control" TValue="int">
+                    <option value="">Seleccione una Clase</option>
+                    @foreach (var classItem in availableClasses)
+                    {
+                        <option value="@classItem.Id">@classItem.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Campo: Entrenador Asociado -->
+            <div class="mb-3">
+                <label for="trainer" class="form-label">Entrenador:</label>
+                <InputSelect id="trainer" @bind="newSchedule.TrainerId" class="form-control" TValue="int">
+                    <option value="">Seleccione un Entrenador</option>
+                    @foreach (var trainer in availableTrainers)
+                    {
+                        <option value="@trainer.Id">@trainer.FullName</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Botones de Guardar y Cancelar -->
+            <div class="d-flex justify-content-start">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-check-circle"></i> Guardar Horario
+                </button>
+                <a href="/Administrador/ManageSchedules" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </EditForm>
+
+        <!-- Mensaje de Error -->
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+    </div>
+</div>
+
+@code {
+    private ClassSchedule newSchedule = new ClassSchedule();
+    private string errorMessage = string.Empty;
+
+    // Listas para cargar clases y entrenadores disponibles
+    private List<Class> availableClasses = new();
+    private List<User> availableTrainers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Cargar las clases y entrenadores disponibles desde la base de datos
+            availableClasses = await DbContext.Classes.ToListAsync();
+            availableTrainers = await DbContext.Users
+                .Where(u => u.Role == "Entrenador")
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar datos: {ex.Message}");
+            errorMessage = "Error al cargar las clases y entrenadores disponibles.";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Validar que la hora de inicio sea menor a la hora de finalización
+            if (newSchedule.StartTime >= newSchedule.EndTime)
+            {
+                errorMessage = "La hora de inicio debe ser menor que la hora de finalización.";
+                return;
+            }
+
+            var scheduleToAdd = new ClassSchedule
+            {
+                Date = newSchedule.Date,
+                StartTime = newSchedule.StartTime,
+                EndTime = newSchedule.EndTime,
+                ClassId = newSchedule.ClassId,
+                TrainerId = newSchedule.TrainerId
+            };
+
+            DbContext.ClassSchedules.Add(scheduleToAdd);
+            await DbContext.SaveChangesAsync();
+
+            NavigationManager.NavigateTo("/Administrador/ManageSchedules");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el horario: {ex.Message}");
+            errorMessage = "Ocurrió un error al guardar el horario. Intente nuevamente.";
+        }
+    }
+}

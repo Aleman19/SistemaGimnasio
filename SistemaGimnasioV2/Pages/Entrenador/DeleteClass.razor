@@ -1,0 +1,100 @@
+﻿@page "/Entrenador/DeleteClass/{classId:int}"
+@using SistemaGimnasioV2.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Eliminar Clase</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando la información de la clase...</div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (classToDelete != null)
+{
+    <div class="alert alert-warning">
+        <p>¿Estás seguro de que deseas eliminar la clase "<strong>@classToDelete.Name</strong>"?</p>
+        <div class="d-flex justify-content-start mt-3">
+            <button class="btn btn-danger me-2" @onclick="ConfirmDelete">
+                <i class="bi bi-trash"></i> Sí, Eliminar
+            </button>
+            <a href="/Entrenador/ManageClasses" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">La clase especificada no existe o ya ha sido eliminada.</div>
+}
+
+@code {
+    [Parameter] public int classId { get; set; } // Captura del parámetro desde la URL
+    private Class? classToDelete = null; // Almacena la clase a eliminar
+    private bool isLoading = true; // Controla la carga inicial
+    private string errorMessage = string.Empty; // Almacena mensajes de error
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Obtener los datos de la clase desde la API
+            classToDelete = await Http.GetFromJsonAsync<Class>($"api/Class/{classId}");
+
+            if (classToDelete == null)
+            {
+                errorMessage = "No se encontró la clase especificada.";
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Error en la solicitud: {httpEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ocurrió un error inesperado: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        try
+        {
+            // Llamar a la API para eliminar la clase
+            var response = await Http.DeleteAsync($"api/Class/Delete/{classId}");
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirigir después de la eliminación
+                NavigationManager.NavigateTo("/Entrenador/ManageClasses");
+            }
+            else
+            {
+                errorMessage = "No se pudo eliminar la clase. Inténtalo nuevamente.";
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Error en la solicitud: {httpEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error inesperado al eliminar la clase: {ex.Message}";
+        }
+    }
+
+    // Modelo para la clase
+    private class Class
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+    }
+}

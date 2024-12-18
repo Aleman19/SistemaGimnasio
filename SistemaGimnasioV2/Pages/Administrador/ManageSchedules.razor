@@ -1,0 +1,83 @@
+﻿@page "/Administrador/ManageSchedules"
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+
+<h3>Gestión de Horarios</h3>
+
+<!-- Mensaje de error -->
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<!-- Tabla de horarios -->
+@if (schedules.Any())
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Clase</th>
+                <th>Entrenador</th>
+                <th>Fecha</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Finalización</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in schedules)
+            {
+                <tr>
+                    <td>@(schedule.Class?.Name ?? "Clase no asignada")</td>
+                    <td>@(schedule.Trainer?.FullName ?? "Entrenador no asignado")</td>
+                    <td>@schedule.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@schedule.StartTime.ToString(@"hh\:mm")</td>
+                    <td>@schedule.EndTime.ToString(@"hh\:mm")</td>
+                    <td>
+                        <!-- Botón para Editar -->
+                        <a href="/Administrador/EditSchedule/@schedule.Id" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <!-- Botón para Eliminar -->
+                        <a href="/Administrador/DeleteSchedule/@schedule.Id" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">No hay horarios disponibles.</div>
+}
+
+<!-- Botón para agregar un nuevo horario -->
+<a href="/Administrador/AddSchedule" class="btn btn-primary mt-3">
+    <i class="bi bi-plus-circle"></i> Agregar Horario
+</a>
+
+@code {
+    private List<ClassSchedule> schedules = new();
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Obtener todos los horarios desde la base de datos con sus relaciones
+            schedules = await DbContext.ClassSchedules
+                .Include(cs => cs.Class)    // Incluir la relación con la clase
+                .Include(cs => cs.Trainer)  // Incluir la relación con el entrenador
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error al cargar los horarios. Intente nuevamente.";
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}

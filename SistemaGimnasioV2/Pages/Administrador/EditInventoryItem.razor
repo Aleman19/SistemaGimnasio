@@ -1,0 +1,136 @@
+﻿@page "/Administrador/EditInventoryItem/{ItemId:int}"
+@using Microsoft.AspNetCore.Components.Forms
+@using SistemaGimnasioV2.Models
+@using SistemaGimnasioV2.Data
+@inject GymDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-4">Editar Ítem de Inventario</h3>
+
+@if (isLoading)
+{
+    <div class="alert alert-info">Cargando...</div>
+}
+else if (editItem != null)
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <!-- Formulario para editar el ítem -->
+            <EditForm Model="@editItem" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <!-- Campo: Nombre del ítem -->
+                <div class="mb-3">
+                    <label for="itemName" class="form-label">Nombre del Ítem:</label>
+                    <InputText id="itemName" @bind-Value="editItem.Name" class="form-control" />
+                </div>
+
+                <!-- Campo: Cantidad -->
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Cantidad:</label>
+                    <InputNumber id="quantity" @bind-Value="editItem.Quantity" class="form-control" />
+                </div>
+
+                <!-- Campo: Precio -->
+                <div class="mb-3">
+                    <label for="price" class="form-label">Precio:</label>
+                    <InputNumber id="price" @bind-Value="editItem.Price" class="form-control" step="0.01" />
+                </div>
+
+                <!-- Campo: Fecha de Compra -->
+                <div class="mb-3">
+                    <label for="purchaseDate" class="form-label">Fecha de Compra:</label>
+                    <InputDate id="purchaseDate" @bind-Value="editItem.PurchaseDate" class="form-control" />
+                </div>
+
+                <!-- Campo: Vida Útil en Meses -->
+                <div class="mb-3">
+                    <label for="lifeSpan" class="form-label">Vida Útil (en meses):</label>
+                    <InputNumber id="lifeSpan" @bind-Value="editItem.LifeSpanMonths" class="form-control" />
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                    <a href="/Administrador/ManageInventory" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger mt-3">@errorMessage</div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No se pudo cargar el ítem de inventario.</div>
+}
+
+@code {
+    [Parameter]
+    public int ItemId { get; set; } // Parámetro de la URL para obtener el ID del ítem
+
+    private InventoryItem? editItem = null; // Modelo del ítem a editar
+    private bool isLoading = true;          // Indica si se están cargando los datos
+    private string errorMessage = string.Empty;
+
+    // Cargar el ítem existente al inicializar la página
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            editItem = await DbContext.InventoryItems.FindAsync(ItemId);
+
+            if (editItem == null)
+            {
+                errorMessage = "El ítem de inventario no existe.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar el ítem: {ex.Message}");
+            errorMessage = "Error al cargar los datos del ítem.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Guardar los cambios realizados en el formulario
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            if (editItem!.PurchaseDate == DateTime.MinValue)
+            {
+                errorMessage = "La fecha de compra es obligatoria.";
+                return;
+            }
+
+            if (editItem.LifeSpanMonths <= 0)
+            {
+                errorMessage = "La vida útil debe ser mayor a 0.";
+                return;
+            }
+
+            DbContext.InventoryItems.Update(editItem);
+            await DbContext.SaveChangesAsync();
+
+            // Redirigir a la página de gestión del inventario
+            NavigationManager.NavigateTo("/Administrador/ManageInventory");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al guardar los cambios: {ex.Message}");
+            errorMessage = "Error al guardar los cambios. Intente nuevamente.";
+        }
+    }
+}

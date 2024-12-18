@@ -1,0 +1,37 @@
+﻿@page "/Entrenador/ClientList"
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.EntityFrameworkCore
+@using SistemaGimnasioV2.Data
+@using SistemaGimnasioV2.Models
+@inject GymDbContext DbContext
+
+<h3>Lista de Clientes</h3>
+
+@if (clients.Any())
+{
+    <ul>
+        @foreach (var client in clients)
+        {
+            <li>
+                @client.FullName -
+                <NavLink href="@($"/Entrenador/ClientDetails/{client.Id}")">Ver Detalles</NavLink>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="alert alert-warning">No hay clientes registrados actualmente.</div>
+}
+
+@code {
+    private List<User> clients = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar usuarios con rol "Cliente" desde la base de datos
+        clients = await DbContext.Users
+            .Where(u => u.Role == "Cliente")
+            .ToListAsync();
+    }
+}

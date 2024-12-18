@@ -1,0 +1,192 @@
+﻿@page "/Cliente/RenewClientMembership"
+@using SistemaGimnasioV2.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3 class="mb-4">Renovar Membresía</h3>
+
+@if (loading)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <!-- Mostrar Membresía Actual -->
+    @if (currentMembership != null)
+    {
+        <div class="alert alert-info">
+            <h5>Membresía Actual:</h5>
+            <p>
+                <strong>Plan:</strong> @currentMembership.PlanName <br />
+                <strong>Vence en:</strong> @($"{currentMembership.DaysToExpire} días restantes") (Vence el @($"{currentMembership.EndDate:dd/MM/yyyy}"))
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <h5>Sin Membresía Activa:</h5>
+            <p>No tienes una membresía activa actualmente.</p>
+        </div>
+    }
+
+    <!-- Mensajes de éxito o error -->
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <!-- Selección de Membresía -->
+    <div class="card shadow-sm mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Elija un plan de membresía</h5>
+
+            @foreach (var plan in membershipPlans)
+            {
+                <div class="form-check mb-2">
+                    <input type="radio" id="@plan.PlanName" name="membershipPlan" value="@plan.PlanName"
+                           @onclick="() => SelectPlan(plan)" class="form-check-input" />
+                    <label for="@plan.PlanName" class="form-check-label">
+                        <strong>@plan.PlanName</strong> - @($"{plan.Price:C}") - @plan.DurationInMonths meses
+                    </label>
+                </div>
+            }
+
+            <!-- Botón para renovar -->
+            <button class="btn btn-primary mt-3" @onclick="RenewMembership" disabled="@(!canSubmit)">
+                <i class="bi bi-credit-card"></i> Renovar Membresía
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    private List<MembershipPlan> membershipPlans = new();
+    private MembershipPlan? selectedPlan;
+    private Membership? currentMembership; // Membresía actual
+    private bool canSubmit = false;
+    private bool loading = true;
+    private string successMessage = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private int userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                userId = int.Parse(user.FindFirst("UserId")?.Value ?? "0"); // Obtener ID del usuario
+                await LoadCurrentMembership();
+                LoadMembershipPlans();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al inicializar la página: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void LoadMembershipPlans()
+    {
+        // Simulación de carga de planes de membresía
+        membershipPlans = new List<MembershipPlan>
+        {
+            new MembershipPlan { PlanName = "Básico", Price = 20, DurationInMonths = 1 },
+            new MembershipPlan { PlanName = "Estándar", Price = 50, DurationInMonths = 3 },
+            new MembershipPlan { PlanName = "Premium", Price = 90, DurationInMonths = 6 },
+            new MembershipPlan { PlanName = "VIP", Price = 150, DurationInMonths = 12 }
+        };
+    }
+
+    private async Task LoadCurrentMembership()
+    {
+        try
+        {
+            // Llamada a la API para obtener la membresía actual
+            currentMembership = await Http.GetFromJsonAsync<Membership>($"api/Client/Membership/{userId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar membresía: {ex.Message}");
+            errorMessage = "No se pudo cargar la membresía actual.";
+        }
+    }
+
+    private void SelectPlan(MembershipPlan plan)
+    {
+        selectedPlan = plan;
+        canSubmit = true;
+        successMessage = string.Empty;
+        errorMessage = string.Empty;
+    }
+
+    private async Task RenewMembership()
+    {
+        if (selectedPlan == null) return;
+
+        try
+        {
+            var renewRequest = new RenewMembershipRequest
+                {
+                    UserId = userId,
+                    PlanName = selectedPlan.PlanName,
+                    DurationInMonths = selectedPlan.DurationInMonths,
+                    Price = selectedPlan.Price
+                };
+
+            var response = await Http.PostAsJsonAsync("api/Client/RenewMembership", renewRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                successMessage = "¡Membresía renovada con éxito!";
+                errorMessage = string.Empty;
+                await LoadCurrentMembership();
+            }
+            else
+            {
+                errorMessage = "Error al renovar la membresía. Inténtelo de nuevo.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error inesperado: {ex.Message}";
+        }
+    }
+
+    // Modelo para los planes
+    private class MembershipPlan
+    {
+        public string PlanName { get; set; } = string.Empty;
+        public int DurationInMonths { get; set; }
+        public decimal Price { get; set; }
+    }
+
+    // Modelo para la solicitud de renovación
+    private class RenewMembershipRequest
+    {
+        public int UserId { get; set; }
+        public string PlanName { get; set; } = string.Empty;
+        public int DurationInMonths { get; set; }
+        public decimal Price { get; set; }
+    }
+}
