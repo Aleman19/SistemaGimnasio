@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SistemaGimnasioV2.Data;
 using SistemaGimnasioV2.Models;
-using System.Linq;
 
 namespace SistemaGimnasioV2.Controllers
 {
@@ -18,77 +18,113 @@ namespace SistemaGimnasioV2.Controllers
 
         // GET: api/Inventory
         [HttpGet]
-        public IActionResult GetInventory()
+        public async Task<ActionResult<IEnumerable<InventoryItem>>> GetInventory()
         {
-            var items = _dbContext.InventoryItems.ToList();
-            return Ok(items);
+            try
+            {
+                var items = await _dbContext.InventoryItems.ToListAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // GET: api/Inventory/Expiring
         [HttpGet("Expiring")]
-        public IActionResult GetExpiringItems()
+        public async Task<ActionResult<IEnumerable<InventoryItem>>> GetExpiringItems()
         {
-            var currentDate = DateTime.Now;
+            try
+            {
+                var currentDate = DateTime.Now;
 
-            // Filtrar ítems a 3 meses o menos de su vencimiento y aún no notificados
-            var expiringItems = _dbContext.InventoryItems
-                .Where(i => !i.IsNotified &&
-                            i.PurchaseDate.AddMonths(i.LifeSpanMonths - 3) <= currentDate)
-                .ToList();
+                var expiringItems = await _dbContext.InventoryItems
+                    .Where(i => !i.IsNotified &&
+                                i.PurchaseDate.AddMonths(i.LifeSpanMonths - 3) <= currentDate)
+                    .ToListAsync();
 
-            return Ok(expiringItems);
+                return Ok(expiringItems);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
         }
 
         // POST: api/Inventory/Add
         [HttpPost("Add")]
-        public IActionResult AddItem([FromBody] InventoryItem item)
+        public async Task<ActionResult<InventoryItem>> AddItem([FromBody] InventoryItem item)
         {
-            if (item == null)
-                return BadRequest("Datos del inventario no válidos.");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            // Validar datos
             if (item.PurchaseDate == DateTime.MinValue || item.LifeSpanMonths <= 0)
                 return BadRequest("Fecha de compra o vida útil no válidas.");
 
-            _dbContext.InventoryItems.Add(item);
-            _dbContext.SaveChanges();
+            try
+            {
+                _dbContext.InventoryItems.Add(item);
+                await _dbContext.SaveChangesAsync();
 
-            return Ok(item);
+                return CreatedAtAction(nameof(GetInventory), new { id = item.Id }, item);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al agregar el ítem: {ex.Message}");
+            }
         }
 
         // PUT: api/Inventory/MarkNotified
         [HttpPut("MarkNotified")]
-        public IActionResult MarkItemsAsNotified([FromBody] List<int> itemIds)
+        public async Task<ActionResult> MarkItemsAsNotified([FromBody] List<int> itemIds)
         {
-            var items = _dbContext.InventoryItems
-                .Where(i => itemIds.Contains(i.Id))
-                .ToList();
+            if (itemIds == null || !itemIds.Any())
+                return BadRequest("No se proporcionaron IDs válidos.");
 
-            if (!items.Any())
-                return NotFound("No se encontraron ítems para actualizar.");
-
-            foreach (var item in items)
+            try
             {
-                item.IsNotified = true;
+                var items = await _dbContext.InventoryItems
+                    .Where(i => itemIds.Contains(i.Id))
+                    .ToListAsync();
+
+                if (!items.Any())
+                    return NotFound("No se encontraron ítems para actualizar.");
+
+                foreach (var item in items)
+                {
+                    item.IsNotified = true;
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok("Los ítems fueron marcados como notificados.");
             }
-
-            _dbContext.SaveChanges();
-
-            return Ok("Los ítems fueron marcados como notificados.");
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al actualizar los ítems: {ex.Message}");
+            }
         }
 
-        // DELETE: api/Inventory/Delete/5
+        // DELETE: api/Inventory/Delete/{id}
         [HttpDelete("Delete/{id}")]
-        public IActionResult DeleteItem(int id)
+        public async Task<ActionResult> DeleteItem(int id)
         {
-            var item = _dbContext.InventoryItems.FirstOrDefault(i => i.Id == id);
-            if (item == null)
-                return NotFound("Ítem de inventario no encontrado.");
+            try
+            {
+                var item = await _dbContext.InventoryItems.FindAsync(id);
+                if (item == null)
+                    return NotFound("Ítem de inventario no encontrado.");
 
-            _dbContext.InventoryItems.Remove(item);
-            _dbContext.SaveChanges();
+                _dbContext.InventoryItems.Remove(item);
+                await _dbContext.SaveChangesAsync();
 
-            return Ok($"Ítem con ID {id} eliminado.");
+                return Ok($"Ítem con ID {id} eliminado.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al eliminar el ítem: {ex.Message}");
+            }
         }
     }
 }
